@@ -1,33 +1,30 @@
-import dotenv
+from dotenv import load_dotenv
 import os
 import argparse
 # Import the function that creates the flow
 from flow import create_tutorial_flow
 
-dotenv.load_dotenv()
+load_dotenv()
 
 # Default file patterns
 DEFAULT_INCLUDE_PATTERNS = {
-    "*.py", "*.js", "*.jsx", "*.ts", "*.tsx", "*.go", "*.java", "*.pyi", "*.pyx", 
-    "*.c", "*.cc", "*.cpp", "*.h", "*.md", "*.rst", "Dockerfile", 
+    "*.py", "*.js", "*.jsx", "*.ts", "*.tsx", "*.go", "*.java", "*.pyi", "*.pyx",
+    "*.c", "*.cc", "*.cpp", "*.h", "*.md", "*.rst", "Dockerfile",
     "Makefile", "*.yaml", "*.yml",
 }
 
 DEFAULT_EXCLUDE_PATTERNS = {
-    "*test*", "tests/*", "docs/*", "examples/*", "v1/*", 
-    "dist/*", "build/*", "experimental/*", "deprecated/*", 
+    "*test*", "tests/*", "docs/*", "examples/*", "v1/*",
+    "dist/*", "build/*", "experimental/*", "deprecated/*",
     "legacy/*", ".git/*", ".github/*", ".next/*", ".vscode/*", "obj/*", "bin/*", "node_modules/*", "*.log"
 }
 
-# --- Main Function ---
 def main():
-    parser = argparse.ArgumentParser(description="Generate a tutorial for a GitHub codebase or local directory.")
-    
-    # Create mutually exclusive group for source
-    source_group = parser.add_mutually_exclusive_group(required=True)
-    source_group.add_argument("--repo", help="URL of the public GitHub repository.")
-    source_group.add_argument("--dir", help="Path to local directory.")
-    
+    parser = argparse.ArgumentParser(description="Generate a codebase tutorial from a GitHub repository or local directory.")
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("--repo", help="GitHub repository URL.")
+    group.add_argument("--dir", help="Local directory path.")
+
     parser.add_argument("-n", "--name", help="Project name (optional, derived from repo/directory if omitted).")
     parser.add_argument("-t", "--token", help="GitHub personal access token (optional, reads from GITHUB_TOKEN env var if not provided).")
     parser.add_argument("-o", "--output", default="output", help="Base directory for output (default: ./output).")
@@ -66,13 +63,9 @@ def main():
         "final_output_dir": None
     }
 
-    print(f"Starting tutorial generation for: {args.repo or args.dir}")
+    # Create and run the flow
+    flow = create_tutorial_flow()
+    flow.run(shared)
 
-    # Create the flow instance
-    tutorial_flow = create_tutorial_flow()
-
-    # Run the flow
-    tutorial_flow.run(shared)
-    
 if __name__ == "__main__":
     main()

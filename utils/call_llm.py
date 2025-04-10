@@ -3,6 +3,8 @@ import os
 import logging
 import json
 from datetime import datetime
+import dotenv
+dotenv.load_dotenv()
 
 # Configure logging
 log_directory = os.getenv("LOG_DIR", "logs")
@@ -24,7 +26,7 @@ cache_file = "llm_cache.json"
 def call_llm(prompt: str, use_cache: bool = True) -> str:
     # Log the prompt
     logger.info(f"PROMPT: {prompt}")
-    
+
     # Check cache if enabled
     if use_cache:
         # Load cache from disk
@@ -35,33 +37,33 @@ def call_llm(prompt: str, use_cache: bool = True) -> str:
                     cache = json.load(f)
             except:
                 logger.warning(f"Failed to load cache, starting with empty cache")
-        
+
         # Return from cache if exists
         if prompt in cache:
             logger.info(f"RESPONSE: {cache[prompt]}")
             return cache[prompt]
-    
+
     # Call the LLM if not in cache or cache disabled
-    client = genai.Client(
-        vertexai=True, 
-        # TODO: change to your own project id and location
-        project=os.getenv("GEMINI_PROJECT_ID", "your-project-id"),
-        location=os.getenv("GEMINI_LOCATION", "us-central1")
-    )
-    # You can comment the previous line and use the AI Studio key instead:
-    # client = genai.Client(
-    #     api_key=os.getenv("GEMINI_API_KEY", "your-api_key"),
+    #  client = genai.Client(
+    #     vertexai=True,
+    #     # TODO: change to your own project id and location
+    #     project=os.getenv("GEMINI_PROJECT_ID", "your-project-id"),
+    #     location=os.getenv("GEMINI_LOCATION", "us-central1")
     # )
+    # You can comment the previous line and use the AI Studio key instead:
+    client = genai.Client(
+         api_key=os.getenv("GEMINI_API_KEY", "your-api_key"),
+     )
     model = os.getenv("GEMINI_MODEL", "gemini-2.5-pro-exp-03-25")
     response = client.models.generate_content(
         model=model,
         contents=[prompt]
     )
     response_text = response.text
-    
+
     # Log the response
     logger.info(f"RESPONSE: {response_text}")
-    
+
     # Update cache if enabled
     if use_cache:
         # Load cache again to avoid overwrites
@@ -72,7 +74,7 @@ def call_llm(prompt: str, use_cache: bool = True) -> str:
                     cache = json.load(f)
             except:
                 pass
-        
+
         # Add to cache and save
         cache[prompt] = response_text
         try:
@@ -80,7 +82,7 @@ def call_llm(prompt: str, use_cache: bool = True) -> str:
                 json.dump(cache, f)
         except Exception as e:
             logger.error(f"Failed to save cache: {e}")
-    
+
     return response_text
 
 # # Use Anthropic Claude 3.7 Sonnet Extended Thinking
@@ -101,7 +103,7 @@ def call_llm(prompt: str, use_cache: bool = True) -> str:
 #     return response.content[1].text
 
 # # Use OpenAI o1
-# def call_llm(prompt, use_cache: bool = True):    
+# def call_llm(prompt, use_cache: bool = True):
 #     from openai import OpenAI
 #     client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY", "your-api-key"))
 #     r = client.chat.completions.create(
@@ -117,9 +119,9 @@ def call_llm(prompt: str, use_cache: bool = True) -> str:
 
 if __name__ == "__main__":
     test_prompt = "Hello, how are you?"
-    
+
     # First call - should hit the API
     print("Making call...")
     response1 = call_llm(test_prompt, use_cache=False)
     print(f"Response: {response1}")
-    
+

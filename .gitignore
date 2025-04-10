@@ -93,4 +93,8 @@ coverage/
 .eslintcache
 
 # Optional REPL history
-.node_repl_history 
+.node_repl_history
+
+
+# uv
+uv.lock

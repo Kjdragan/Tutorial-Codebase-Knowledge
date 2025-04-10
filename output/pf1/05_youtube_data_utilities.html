@@ -1,85 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>05 Youtube Data Utilities</title>
+    <style>
+        pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f8f8f8; }
+.highlight .c { color: #3D7B7B; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #F00 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666 } /* Operator */
+.highlight .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #9C6500 } /* Comment.Preproc */
+.highlight .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #E40000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #008400 } /* Generic.Inserted */
+.highlight .go { color: #717171 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #04D } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #687822 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #00F; font-weight: bold } /* Name.Class */
+.highlight .no { color: #800 } /* Name.Constant */
+.highlight .nd { color: #A2F } /* Name.Decorator */
+.highlight .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #00F } /* Name.Function */
+.highlight .nl { color: #767600 } /* Name.Label */
+.highlight .nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #BBB } /* Text.Whitespace */
+.highlight .mb { color: #666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666 } /* Literal.Number.Float */
+.highlight .mh { color: #666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #A45A77 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #00F } /* Name.Function.Magic */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
+.highlight .il { color: #666 } /* Literal.Number.Integer.Long */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f6f8fa;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navigation">
+        <a class="nav-link" href="04_topic_processing_orchestrator.html">&larr; Previous</a>
+        <a class="nav-link" href="index.html">Index</a>
+        <a class="nav-link" href="06_llm_utility.html">Next &rarr;</a>
+    </div>
+    <h1>Chapter 5: YouTube Data Utilities</h1>
 
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>05 Youtube Data Utilities</title>
-            
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                line-height: 1.6;
-                max-width: 900px;
-                margin: 0 auto;
-                padding: 20px;
-            }
-            pre {
-                background-color: #f5f5f5;
-                padding: 15px;
-                border-radius: 5px;
-                overflow-x: auto;
-            }
-            code {
-                background-color: #f5f5f5;
-                padding: 2px 5px;
-                border-radius: 3px;
-            }
-            .navigation {
-                display: flex;
-                justify-content: space-between;
-                margin: 20px 0;
-                padding: 10px;
-                background-color: #f5f5f5;
-                border-radius: 5px;
-            }
-            .nav-link {
-                text-decoration: none;
-                color: #0366d6;
-            }
-            .nav-link:hover {
-                text-decoration: underline;
-            }
-            .mermaid {
-                text-align: center;
-                margin: 20px 0;
-            }
-        </style>
-        
-            
-        <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                mermaid.initialize({
-                    startOnLoad: true,
-                    theme: 'default',
-                    securityLevel: 'loose',
-                    flowchart: {
-                        useMaxWidth: false,
-                        htmlLabels: true
-                    },
-                    sequence: {
-                        useMaxWidth: false,
-                        htmlLabels: true,
-                        diagramMarginX: 50,
-                        diagramMarginY: 10,
-                        boxMargin: 10
-                    }
-                });
-            });
-        </script>
-        
-        </head>
-        <body>
-            
-        <div class="navigation">
-            <a class="nav-link" href="04_topic_processing_orchestrator.html">&larr; Previous</a>
-            <a class="nav-link" href="index.html">Index</a>
-            <a class="nav-link" href="06_llm_utility.html">Next &rarr;</a>
-        </div>
-        
-            <h1>Chapter 5: YouTube Data Utilities</h1>
-
-<p>Welcome back! In the previous chapter, <a href="04_topic_processing_orchestrator.md">Topic Processing Orchestrator</a>, we saw how our pipeline cleverly analyzes multiple topics from a video transcript in parallel. We also saw in earlier chapters how Nodes like <code>InputProcessingNode</code> and <code>ContentExtractionNode</code> magically seem to get information <em>about</em> the video (like its title) and its transcript (the spoken words).</p>
+<p>Welcome back! In the previous chapter, <a rel="noopener" target="_blank" href="04_topic_processing_orchestrator.md">Topic Processing Orchestrator</a>, we saw how our pipeline cleverly analyzes multiple topics from a video transcript in parallel. We also saw in earlier chapters how Nodes like <code>InputProcessingNode</code> and <code>ContentExtractionNode</code> magically seem to get information <em>about</em> the video (like its title) and its transcript (the spoken words).</p>
 
 <p>But where does this information actually <em>come from</em>? How does our program talk to YouTube? That's where our <strong>YouTube Data Utilities</strong> come in!</p>
 
@@ -99,7 +125,7 @@
 
 <p>Imagine you have a toolbox. You don't just have one giant "Do-Everything" tool. You have specific tools for specific jobs: a screwdriver for screws, a wrench for bolts, a hammer for nails.</p>
 
-<p>Our <strong>YouTube Data Utilities</strong> are like these specialized tools in our project's toolbox. They are <em>not</em> full pipeline <a href="02_node__pipeline_step_.md">Nodes (Pipeline Step)</a> themselves. Instead, they are smaller, focused helper functions that our Nodes <em>use</em> to perform specific tasks related to YouTube.</p>
+<p>Our <strong>YouTube Data Utilities</strong> are like these specialized tools in our project's toolbox. They are <em>not</em> full pipeline <a rel="noopener" target="_blank" href="02_node__pipeline_step_.md">Nodes (Pipeline Step)</a> themselves. Instead, they are smaller, focused helper functions that our Nodes <em>use</em> to perform specific tasks related to YouTube.</p>
 
 <p>We have three main utility tools in our <code>src/utils/</code> directory:</p>
 
@@ -113,7 +139,7 @@
 
 <h2>How Nodes Use These Utilities</h2>
 
-<p>Our pipeline Nodes, which we learned about in <a href="02_node__pipeline_step_.md">Chapter 2: Node (Pipeline Step)</a>, act like the workers on the assembly line. When a worker needs to perform a YouTube-specific action, they reach into the toolbox and use the appropriate utility. This usually happens inside the Node's <code>exec()</code> method.</p>
+<p>Our pipeline Nodes, which we learned about in <a rel="noopener" target="_blank" href="02_node__pipeline_step_.md">Chapter 2: Node (Pipeline Step)</a>, act like the workers on the assembly line. When a worker needs to perform a YouTube-specific action, they reach into the toolbox and use the appropriate utility. This usually happens inside the Node's <code>exec()</code> method.</p>
 
 <p><strong>Example 1: Input Processing Node using the Link Checker and Info Fetcher</strong></p>
 
@@ -160,15 +186,18 @@
 </code></pre>
 </div>
 
-<p>In this snippet:
-1.  The Node calls <code>validate_youtube_url</code> with the input URL.
-2.  If valid, it gets back <code>True</code> and the <code>video_id</code>. It stores the <code>video_id</code> in <a href="03_shared_memory.md">Shared Memory</a>.
-3.  It then calls <code>extract_youtube_metadata</code> with the <code>video_id</code>.
-4.  If successful, it gets back a dictionary of metadata (title, channel, etc.) and stores it in <a href="03_shared_memory.md">Shared Memory</a>.</p>
+<p>In this snippet:</p>
+
+<ol>
+<li>The Node calls <code>validate_youtube_url</code> with the input URL.</li>
+<li>If valid, it gets back <code>True</code> and the <code>video_id</code>. It stores the <code>video_id</code> in <a rel="noopener" target="_blank" href="03_shared_memory.md">Shared Memory</a>.</li>
+<li>It then calls <code>extract_youtube_metadata</code> with the <code>video_id</code>.</li>
+<li>If successful, it gets back a dictionary of metadata (title, channel, etc.) and stores it in <a rel="noopener" target="_blank" href="03_shared_memory.md">Shared Memory</a>.</li>
+</ol>
 
 <p><strong>Example 2: Content Extraction Node using the Script Grabber</strong></p>
 
-<p>The <code>ContentExtractionNode</code>'s job is to get the transcript. It expects the <code>video_id</code> to already be in <a href="03_shared_memory.md">Shared Memory</a> (put there by the <code>InputProcessingNode</code>).</p>
+<p>The <code>ContentExtractionNode</code>'s job is to get the transcript. It expects the <code>video_id</code> to already be in <a rel="noopener" target="_blank" href="03_shared_memory.md">Shared Memory</a> (put there by the <code>InputProcessingNode</code>).</p>
 
 <div class="codehilite">
 <pre><span></span><code><span class="c1"># Simplified from src/nodes/content_extraction_node.py</span>
@@ -199,10 +228,13 @@
 </code></pre>
 </div>
 
-<p>Here:
-1.  The Node gets the <code>video_id</code> from <a href="03_shared_memory.md">Shared Memory</a>.
-2.  It calls <code>extract_youtube_transcript</code> with the <code>video_id</code>.
-3.  If successful, it gets back the transcript text as a string and stores it in <a href="03_shared_memory.md">Shared Memory</a> under the key <code>"transcript"</code>.</p>
+<p>Here:</p>
+
+<ol>
+<li>The Node gets the <code>video_id</code> from <a rel="noopener" target="_blank" href="03_shared_memory.md">Shared Memory</a>.</li>
+<li>It calls <code>extract_youtube_transcript</code> with the <code>video_id</code>.</li>
+<li>If successful, it gets back the transcript text as a string and stores it in <a rel="noopener" target="_blank" href="03_shared_memory.md">Shared Memory</a> under the key <code>"transcript"</code>.</li>
+</ol>
 
 <p>These examples show how Nodes delegate specific YouTube interactions to our utility functions, keeping the Node's code focused on its main workflow (<code>prep</code>, <code>exec</code>, <code>post</code>).</p>
 
@@ -347,23 +379,20 @@
 <li>They handle the details of pattern matching (<code>validate_youtube_url</code>), talking to the YouTube Data API (<code>extract_youtube_metadata</code>), and using libraries to get transcripts (<code>extract_youtube_transcript</code>).</li>
 </ul>
 
-<p>These utilities provide the raw materials (metadata, transcript) that the rest of our pipeline (<a href="01_pipeline_orchestration.md">Pipeline Orchestration</a>) processes to create the final summary.</p>
+<p>These utilities provide the raw materials (metadata, transcript) that the rest of our pipeline (<a rel="noopener" target="_blank" href="01_pipeline_orchestration.md">Pipeline Orchestration</a>) processes to create the final summary.</p>
 
 <p>Now that we have the video's transcript, how do we actually analyze it to find topics, generate Q&amp;A, or create ELI5 summaries? This often involves using powerful Artificial Intelligence models. Let's explore the utility designed to help us interact with these AI models next.</p>
 
-<p>Ready to see how we talk to the AI? Let's move on to <a href="06_llm_utility.md">Chapter 6: LLM Utility</a>!</p>
+<p>Ready to see how we talk to the AI? Let's move on to <a rel="noopener" target="_blank" href="06_llm_utility.md">Chapter 6: LLM Utility</a>!</p>
 
 <hr />
 
-<p>Generated by <a href="https://github.com/The-Pocket/Tutorial-Codebase-Knowledge">AI Codebase Knowledge Builder</a></p>
+<p>Generated by <a rel="noopener" target="_blank" href="https://github.com/The-Pocket/Tutorial-Codebase-Knowledge">AI Codebase Knowledge Builder</a></p>
 
-            
-        <div class="navigation">
-            <a class="nav-link" href="04_topic_processing_orchestrator.html">&larr; Previous</a>
-            <a class="nav-link" href="index.html">Index</a>
-            <a class="nav-link" href="06_llm_utility.html">Next &rarr;</a>
-        </div>
-        
-        </body>
-        </html>
-        
+    <div class="navigation">
+        <a class="nav-link" href="04_topic_processing_orchestrator.html">&larr; Previous</a>
+        <a class="nav-link" href="index.html">Index</a>
+        <a class="nav-link" href="06_llm_utility.html">Next &rarr;</a>
+    </div>
+</body>
+</html>

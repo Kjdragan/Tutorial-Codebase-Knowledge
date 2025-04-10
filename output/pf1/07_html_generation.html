@@ -1,85 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>07 Html Generation</title>
+    <style>
+        pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f8f8f8; }
+.highlight .c { color: #3D7B7B; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #F00 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666 } /* Operator */
+.highlight .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #9C6500 } /* Comment.Preproc */
+.highlight .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #E40000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #008400 } /* Generic.Inserted */
+.highlight .go { color: #717171 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #04D } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #687822 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #00F; font-weight: bold } /* Name.Class */
+.highlight .no { color: #800 } /* Name.Constant */
+.highlight .nd { color: #A2F } /* Name.Decorator */
+.highlight .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #00F } /* Name.Function */
+.highlight .nl { color: #767600 } /* Name.Label */
+.highlight .nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #BBB } /* Text.Whitespace */
+.highlight .mb { color: #666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666 } /* Literal.Number.Float */
+.highlight .mh { color: #666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #A45A77 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #00F } /* Name.Function.Magic */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
+.highlight .il { color: #666 } /* Literal.Number.Integer.Long */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f6f8fa;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navigation">
+        <a class="nav-link" href="06_llm_utility.html">&larr; Previous</a>
+        <a class="nav-link" href="index.html">Index</a>
+        <a class="nav-link" href="08_logging.html">Next &rarr;</a>
+    </div>
+    <h1>Chapter 7: HTML Generation</h1>
 
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>07 Html Generation</title>
-            
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                line-height: 1.6;
-                max-width: 900px;
-                margin: 0 auto;
-                padding: 20px;
-            }
-            pre {
-                background-color: #f5f5f5;
-                padding: 15px;
-                border-radius: 5px;
-                overflow-x: auto;
-            }
-            code {
-                background-color: #f5f5f5;
-                padding: 2px 5px;
-                border-radius: 3px;
-            }
-            .navigation {
-                display: flex;
-                justify-content: space-between;
-                margin: 20px 0;
-                padding: 10px;
-                background-color: #f5f5f5;
-                border-radius: 5px;
-            }
-            .nav-link {
-                text-decoration: none;
-                color: #0366d6;
-            }
-            .nav-link:hover {
-                text-decoration: underline;
-            }
-            .mermaid {
-                text-align: center;
-                margin: 20px 0;
-            }
-        </style>
-        
-            
-        <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                mermaid.initialize({
-                    startOnLoad: true,
-                    theme: 'default',
-                    securityLevel: 'loose',
-                    flowchart: {
-                        useMaxWidth: false,
-                        htmlLabels: true
-                    },
-                    sequence: {
-                        useMaxWidth: false,
-                        htmlLabels: true,
-                        diagramMarginX: 50,
-                        diagramMarginY: 10,
-                        boxMargin: 10
-                    }
-                });
-            });
-        </script>
-        
-        </head>
-        <body>
-            
-        <div class="navigation">
-            <a class="nav-link" href="06_llm_utility.html">&larr; Previous</a>
-            <a class="nav-link" href="index.html">Index</a>
-            <a class="nav-link" href="08_logging.html">Next &rarr;</a>
-        </div>
-        
-            <h1>Chapter 7: HTML Generation</h1>
-
-<p>Welcome back! In <a href="06_llm_utility.md">Chapter 6: LLM Utility</a>, we saw how our project uses a powerful AI assistant (a Large Language Model) to analyze the video transcript and generate insightful content like topics, Q&amp;A pairs, and simple ELI5 explanations. All these results are carefully stored in our central <a href="03_shared_memory.md">Shared Memory</a> dictionary.</p>
+<p>Welcome back! In <a rel="noopener" target="_blank" href="06_llm_utility.md">Chapter 6: LLM Utility</a>, we saw how our project uses a powerful AI assistant (a Large Language Model) to analyze the video transcript and generate insightful content like topics, Q&amp;A pairs, and simple ELI5 explanations. All these results are carefully stored in our central <a rel="noopener" target="_blank" href="03_shared_memory.md">Shared Memory</a> dictionary.</p>
 
 <p>But right now, all that great information is just sitting inside a Python dictionary. That's not very easy for a person to read or share! Imagine getting a big pile of notes and data scribbled on scraps of paper. You'd want someone to organize it into a polished, easy-to-read final report.</p>
 
@@ -87,13 +113,16 @@
 
 <h2>The Problem: Presenting Results Nicely</h2>
 
-<p>Our pipeline has worked hard:
-1.  It fetched video info (<a href="05_youtube_data_utilities.md">Chapter 5: YouTube Data Utilities</a>).
-2.  It extracted the transcript.
-3.  It identified topics (<a href="04_topic_processing_orchestrator.md">Chapter 4: Topic Processing Orchestrator</a>).
-4.  It generated Q&amp;A and ELI5 summaries using AI (<a href="06_llm_utility.md">Chapter 6: LLM Utility</a>).</p>
+<p>Our pipeline has worked hard:</p>
 
-<p>All these pieces – the video title, the list of topics, the questions and answers, the simple explanations – are collected in the <a href="03_shared_memory.md">Shared Memory</a> dictionary. But how do we show this to the user in a way that looks good and is easy to understand?</p>
+<ol>
+<li>It fetched video info (<a rel="noopener" target="_blank" href="05_youtube_data_utilities.md">Chapter 5: YouTube Data Utilities</a>).</li>
+<li>It extracted the transcript.</li>
+<li>It identified topics (<a rel="noopener" target="_blank" href="04_topic_processing_orchestrator.md">Chapter 4: Topic Processing Orchestrator</a>).</li>
+<li>It generated Q&amp;A and ELI5 summaries using AI (<a rel="noopener" target="_blank" href="06_llm_utility.md">Chapter 6: LLM Utility</a>).</li>
+</ol>
+
+<p>All these pieces – the video title, the list of topics, the questions and answers, the simple explanations – are collected in the <a rel="noopener" target="_blank" href="03_shared_memory.md">Shared Memory</a> dictionary. But how do we show this to the user in a way that looks good and is easy to understand?</p>
 
 <h2>Our Solution: The Report Creator (HTML Generation Node)</h2>
 
@@ -101,17 +130,20 @@
 
 <p>In our project, this final document is an <strong>HTML file</strong>. HTML (HyperText Markup Language) is the standard language used to create web pages. By generating an HTML file, we create a report that can be easily opened and viewed in any web browser (like Chrome, Firefox, or Safari), complete with nice formatting, images, and links.</p>
 
-<p>The component responsible for this is the <strong><code>HTMLGenerationNode</code></strong>. It's typically the <em>last</em> <a href="02_node__pipeline_step_.md">Node (Pipeline Step)</a> run by our <a href="01_pipeline_orchestration.md">Pipeline Orchestration</a>.</p>
+<p>The component responsible for this is the <strong><code>HTMLGenerationNode</code></strong>. It's typically the <em>last</em> <a rel="noopener" target="_blank" href="02_node__pipeline_step_.md">Node (Pipeline Step)</a> run by our <a rel="noopener" target="_blank" href="01_pipeline_orchestration.md">Pipeline Orchestration</a>.</p>
 
-<p><strong>What it does:</strong>
-1.  <strong>Gathers Ingredients:</strong> Reads all the necessary results (metadata, topics, Q&amp;A, ELI5) from the <a href="03_shared_memory.md">Shared Memory</a>.
-2.  <strong>Follows a Recipe:</strong> Uses a template (like a recipe) to structure this information into an HTML format.
-3.  <strong>Creates the Dish:</strong> Generates the final HTML text.
-4.  <strong>Serves It:</strong> Saves this HTML text into a file (e.g., <code>summary.html</code>) that the user can open.</p>
+<p><strong>What it does:</strong></p>
+
+<ol>
+<li><strong>Gathers Ingredients:</strong> Reads all the necessary results (metadata, topics, Q&amp;A, ELI5) from the <a rel="noopener" target="_blank" href="03_shared_memory.md">Shared Memory</a>.</li>
+<li><strong>Follows a Recipe:</strong> Uses a template (like a recipe) to structure this information into an HTML format.</li>
+<li><strong>Creates the Dish:</strong> Generates the final HTML text.</li>
+<li><strong>Serves It:</strong> Saves this HTML text into a file (e.g., <code>summary.html</code>) that the user can open.</li>
+</ol>
 
 <h2>How the HTML Generation Node Fits In</h2>
 
-<p>The <code>run_pipeline</code> function (<a href="01_pipeline_orchestration.md">Chapter 1: Pipeline Orchestration</a>) calls the <code>HTMLGenerationNode</code> after all the analysis is done.</p>
+<p>The <code>run_pipeline</code> function (<a rel="noopener" target="_blank" href="01_pipeline_orchestration.md">Chapter 1: Pipeline Orchestration</a>) calls the <code>HTMLGenerationNode</code> after all the analysis is done.</p>
 
 <div class="codehilite">
 <pre><span></span><code><span class="c1"># Simplified snippet from src/main.py</span>
@@ -147,13 +179,13 @@
 
 <h2>What Happens Inside the Node: Prep, Exec, Post</h2>
 
-<p>Like all our Nodes (<a href="02_node__pipeline_step_.md">Chapter 2: Node (Pipeline Step)</a>), the <code>HTMLGenerationNode</code> follows the standard <code>prep -&gt; exec -&gt; post</code> workflow.</p>
+<p>Like all our Nodes (<a rel="noopener" target="_blank" href="02_node__pipeline_step_.md">Chapter 2: Node (Pipeline Step)</a>), the <code>HTMLGenerationNode</code> follows the standard <code>prep -&gt; exec -&gt; post</code> workflow.</p>
 
 <ol>
 <li><p><strong><code>prep()</code> (Get Ready):</strong></p>
 
 <ul>
-<li>Checks the <a href="03_shared_memory.md">Shared Memory</a> to make sure all the required data pieces are present (e.g., <code>"metadata"</code>, <code>"topics"</code>, <code>"qa_pairs"</code>, <code>"eli5_content"</code>).</li>
+<li>Checks the <a rel="noopener" target="_blank" href="03_shared_memory.md">Shared Memory</a> to make sure all the required data pieces are present (e.g., <code>"metadata"</code>, <code>"topics"</code>, <code>"qa_pairs"</code>, <code>"eli5_content"</code>).</li>
 <li>If anything crucial is missing, it raises an error.</li>
 <li>If a previous step already reported an error, it might decide to skip HTML generation.</li>
 </ul></li>
@@ -161,8 +193,8 @@
 
 <ul>
 <li>Bundles the required data (metadata, topics, etc.) into a structure that's easy to work with.</li>
-<li>Calls a special helper function (a utility like the ones in <a href="05_youtube_data_utilities.md">Chapter 5</a>) called <code>generate_html</code>. This utility takes the data and does the actual work of creating the HTML string.</li>
-<li>Stores the generated HTML content back into <a href="03_shared_memory.md">Shared Memory</a> (e.g., under the key <code>"html_output"</code>).</li>
+<li>Calls a special helper function (a utility like the ones in <a rel="noopener" target="_blank" href="05_youtube_data_utilities.md">Chapter 5</a>) called <code>generate_html</code>. This utility takes the data and does the actual work of creating the HTML string.</li>
+<li>Stores the generated HTML content back into <a rel="noopener" target="_blank" href="03_shared_memory.md">Shared Memory</a> (e.g., under the key <code>"html_output"</code>).</li>
 <li>If an <code>output_path</code> was provided (like in the <code>main.py</code> example), it writes the generated HTML content to that file on the disk.</li>
 </ul></li>
 <li><p><strong><code>post()</code> (Clean Up):</strong></p>
@@ -179,17 +211,22 @@
 
 <p>Think of <code>generate_html</code> as a <strong>template filler</strong>. It has a predefined structure for the HTML page (like a fill-in-the-blanks form letter) and knows where to plug in the specific data (video title, topics, Q&amp;A, etc.) that it receives from the <code>HTMLGenerationNode</code>.</p>
 
-<p><strong>How it works (simplified):</strong>
-1.  <strong>Gets Data:</strong> Receives the <code>summary_data</code> dictionary from the Node.
-2.  <strong>Starts HTML:</strong> Begins creating the HTML string with standard tags (<code>&lt;html&gt;</code>, <code>&lt;head&gt;</code>, <code>&lt;body&gt;</code>).
-3.  <strong>Adds Styling:</strong> Includes CSS rules inside <code>&lt;style&gt;</code> tags to make the page look nice (colors, fonts, layout).
-4.  <strong>Inserts Header:</strong> Puts the video title, channel name, thumbnail, and YouTube link near the top.
-5.  <strong>Loops Through Topics:</strong> Goes through each topic in the list. For each topic:
-    *   Creates a section header (e.g., "Topic 1: Music Video Plot").
-    *   Adds the ELI5 explanation for that topic.
-    *   Adds the Q&amp;A pairs associated with that topic, formatting the questions and answers clearly.
-6.  <strong>Adds Footer:</strong> Puts some concluding text at the bottom.
-7.  <strong>Returns HTML:</strong> Returns the complete HTML content as one long string.</p>
+<p><strong>How it works (simplified):</strong></p>
+
+<ol>
+<li><strong>Gets Data:</strong> Receives the <code>summary_data</code> dictionary from the Node.</li>
+<li><strong>Starts HTML:</strong> Begins creating the HTML string with standard tags (<code>&lt;html&gt;</code>, <code>&lt;head&gt;</code>, <code>&lt;body&gt;</code>).</li>
+<li><strong>Adds Styling:</strong> Includes CSS rules inside <code>&lt;style&gt;</code> tags to make the page look nice (colors, fonts, layout).</li>
+<li><strong>Inserts Header:</strong> Puts the video title, channel name, thumbnail, and YouTube link near the top.</li>
+<li><strong>Loops Through Topics:</strong> Goes through each topic in the list. For each topic:
+<ul>
+<li>Creates a section header (e.g., "Topic 1: Music Video Plot").</li>
+<li>Adds the ELI5 explanation for that topic.</li>
+<li>Adds the Q&amp;A pairs associated with that topic, formatting the questions and answers clearly.</li>
+</ul></li>
+<li><strong>Adds Footer:</strong> Puts some concluding text at the bottom.</li>
+<li><strong>Returns HTML:</strong> Returns the complete HTML content as one long string.</li>
+</ol>
 
 <p><strong>Important Note on Security:</strong> When putting data from potentially external sources (like video titles or Q&amp;A generated by AI) into HTML, it's crucial to "escape" special characters (like <code>&lt;</code>, <code>&gt;</code>, <code>&amp;</code>). The <code>generate_html</code> utility uses Python's <code>html.escape()</code> function to do this, preventing potential security issues like Cross-Site Scripting (XSS).</p>
 
@@ -325,7 +362,7 @@
 
 <ul>
 <li><strong>Purpose:</strong> To present all the analyzed video information (metadata, topics, Q&amp;A, ELI5) in a user-friendly, visually appealing format.</li>
-<li><strong>Mechanism:</strong> The <code>HTMLGenerationNode</code> reads the results from <a href="03_shared_memory.md">Shared Memory</a>.</li>
+<li><strong>Mechanism:</strong> The <code>HTMLGenerationNode</code> reads the results from <a rel="noopener" target="_blank" href="03_shared_memory.md">Shared Memory</a>.</li>
 <li><strong>Helper Utility:</strong> It uses the <code>generate_html</code> function, which acts like a template filler, to create the actual HTML content.</li>
 <li><strong>Output:</strong> Produces an HTML string (stored in Shared Memory) and saves it as an <code>.html</code> file that can be opened in a web browser.</li>
 </ul>
@@ -334,19 +371,16 @@
 
 <p>Throughout these chapters, we've seen mentions of <code>logger.info</code>, <code>logger.error</code>, etc. How does our program keep track of what it's doing, report progress, and help us find problems? That's the job of our logging system.</p>
 
-<p>Let's dive into how logging works in our project in the next chapter: <a href="08_logging.md">Chapter 8: Logging</a>!</p>
+<p>Let's dive into how logging works in our project in the next chapter: <a rel="noopener" target="_blank" href="08_logging.md">Chapter 8: Logging</a>!</p>
 
 <hr />
 
-<p>Generated by <a href="https://github.com/The-Pocket/Tutorial-Codebase-Knowledge">AI Codebase Knowledge Builder</a></p>
+<p>Generated by <a rel="noopener" target="_blank" href="https://github.com/The-Pocket/Tutorial-Codebase-Knowledge">AI Codebase Knowledge Builder</a></p>
 
-            
-        <div class="navigation">
-            <a class="nav-link" href="06_llm_utility.html">&larr; Previous</a>
-            <a class="nav-link" href="index.html">Index</a>
-            <a class="nav-link" href="08_logging.html">Next &rarr;</a>
-        </div>
-        
-        </body>
-        </html>
-        
+    <div class="navigation">
+        <a class="nav-link" href="06_llm_utility.html">&larr; Previous</a>
+        <a class="nav-link" href="index.html">Index</a>
+        <a class="nav-link" href="08_logging.html">Next &rarr;</a>
+    </div>
+</body>
+</html>

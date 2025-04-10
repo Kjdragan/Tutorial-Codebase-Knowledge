@@ -1,85 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>08 Logging</title>
+    <style>
+        pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f8f8f8; }
+.highlight .c { color: #3D7B7B; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #F00 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666 } /* Operator */
+.highlight .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #9C6500 } /* Comment.Preproc */
+.highlight .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #E40000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #008400 } /* Generic.Inserted */
+.highlight .go { color: #717171 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #04D } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #687822 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #00F; font-weight: bold } /* Name.Class */
+.highlight .no { color: #800 } /* Name.Constant */
+.highlight .nd { color: #A2F } /* Name.Decorator */
+.highlight .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #00F } /* Name.Function */
+.highlight .nl { color: #767600 } /* Name.Label */
+.highlight .nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #BBB } /* Text.Whitespace */
+.highlight .mb { color: #666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666 } /* Literal.Number.Float */
+.highlight .mh { color: #666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #A45A77 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #00F } /* Name.Function.Magic */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
+.highlight .il { color: #666 } /* Literal.Number.Integer.Long */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f6f8fa;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navigation">
+        <a class="nav-link" href="07_html_generation.html">&larr; Previous</a>
+        <a class="nav-link" href="index.html">Index</a>
+        <a class="nav-link" href="index.html">Next &rarr;</a>
+    </div>
+    <h1>Chapter 8: Logging</h1>
 
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>08 Logging</title>
-            
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                line-height: 1.6;
-                max-width: 900px;
-                margin: 0 auto;
-                padding: 20px;
-            }
-            pre {
-                background-color: #f5f5f5;
-                padding: 15px;
-                border-radius: 5px;
-                overflow-x: auto;
-            }
-            code {
-                background-color: #f5f5f5;
-                padding: 2px 5px;
-                border-radius: 3px;
-            }
-            .navigation {
-                display: flex;
-                justify-content: space-between;
-                margin: 20px 0;
-                padding: 10px;
-                background-color: #f5f5f5;
-                border-radius: 5px;
-            }
-            .nav-link {
-                text-decoration: none;
-                color: #0366d6;
-            }
-            .nav-link:hover {
-                text-decoration: underline;
-            }
-            .mermaid {
-                text-align: center;
-                margin: 20px 0;
-            }
-        </style>
-        
-            
-        <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                mermaid.initialize({
-                    startOnLoad: true,
-                    theme: 'default',
-                    securityLevel: 'loose',
-                    flowchart: {
-                        useMaxWidth: false,
-                        htmlLabels: true
-                    },
-                    sequence: {
-                        useMaxWidth: false,
-                        htmlLabels: true,
-                        diagramMarginX: 50,
-                        diagramMarginY: 10,
-                        boxMargin: 10
-                    }
-                });
-            });
-        </script>
-        
-        </head>
-        <body>
-            
-        <div class="navigation">
-            <a class="nav-link" href="07_html_generation.html">&larr; Previous</a>
-            <a class="nav-link" href="index.html">Index</a>
-            <a class="nav-link" href="index.html">Next &rarr;</a>
-        </div>
-        
-            <h1>Chapter 8: Logging</h1>
-
-<p>Welcome to the final chapter! In <a href="07_html_generation.md">Chapter 7: HTML Generation</a>, we saw how our <code>pf1</code> pipeline takes all the analyzed data and creates a beautiful, easy-to-read HTML report. Our program successfully went from a YouTube URL to a full summary!</p>
+<p>Welcome to the final chapter! In <a rel="noopener" target="_blank" href="07_html_generation.md">Chapter 7: HTML Generation</a>, we saw how our <code>pf1</code> pipeline takes all the analyzed data and creates a beautiful, easy-to-read HTML report. Our program successfully went from a YouTube URL to a full summary!</p>
 
 <p>But wait... while the pipeline was running all those steps – fetching data, extracting transcripts, talking to AI, generating HTML – how did we know what was happening? What if something went wrong halfway through? How could we track the progress or diagnose a problem?</p>
 
@@ -89,11 +115,14 @@
 
 <p>Imagine a ship on a long voyage. The captain and crew keep a detailed <strong>logbook</strong>. They record important events: when they left port, the weather conditions, any interesting sightings, course changes, and crucially, any problems encountered (like a leak or equipment failure). Later, anyone can read this logbook to understand what happened during the voyage.</p>
 
-<p><strong>Logging</strong> in a computer program is exactly like keeping this logbook. It's a way for the program to write down messages about what it's doing as it runs. These messages can include:
-*   Information about progress ("Starting transcript extraction...")
-*   Warnings about potential issues ("API key not found, using default...")
-*   Errors that occurred ("Failed to connect to YouTube API!")
-*   Detailed debugging information useful for developers.</p>
+<p><strong>Logging</strong> in a computer program is exactly like keeping this logbook. It's a way for the program to write down messages about what it's doing as it runs. These messages can include:</p>
+
+<ul>
+<li>Information about progress ("Starting transcript extraction...")</li>
+<li>Warnings about potential issues ("API key not found, using default...")</li>
+<li>Errors that occurred ("Failed to connect to YouTube API!")</li>
+<li>Detailed debugging information useful for developers.</li>
+</ul>
 
 <h2>Why Do We Need Logging?</h2>
 
@@ -199,7 +228,7 @@
 
 <h2>How to Use the Logger in <code>pf1</code></h2>
 
-<p>Using the logger in any part of our project (like inside a <a href="02_node__pipeline_step_.md">Node (Pipeline Step)</a> or a utility function) is very simple:</p>
+<p>Using the logger in any part of our project (like inside a <a rel="noopener" target="_blank" href="02_node__pipeline_step_.md">Node (Pipeline Step)</a> or a utility function) is very simple:</p>
 
 <ol>
 <li><p><strong>Import it:</strong> Add this line at the top of your Python file:</p>
@@ -208,6 +237,7 @@
 <pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">src.utils.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 </code></pre>
 </div></li>
+
 <li><p><strong>Call its methods:</strong> Whenever you want to record something, call the appropriate method on the <code>logger</code> object:</p>
 
 <ul>
@@ -265,9 +295,12 @@
 </code></pre>
 </div>
 
-<p>When this code runs:
-*   You'd see <code>INFO</code> and <code>ERROR</code> messages on your console (because we set console level to <code>INFO</code>).
-*   The log file (<code>logs/youtube_summarizer_....log</code>) would contain <em>all</em> the messages, including the <code>DEBUG</code> ones, along with timestamps and function names.</p>
+<p>When this code runs:</p>
+
+<ul>
+<li>You'd see <code>INFO</code> and <code>ERROR</code> messages on your console (because we set console level to <code>INFO</code>).</li>
+<li>The log file (<code>logs/youtube_summarizer_....log</code>) would contain <em>all</em> the messages, including the <code>DEBUG</code> ones, along with timestamps and function names.</li>
+</ul>
 
 <h2>Under the Hood: How Loguru Knows Where You Are</h2>
 
@@ -314,29 +347,29 @@
 
 <p><strong>This concludes our tutorial series for the <code>pf1</code> YouTube Summarizer project!</strong></p>
 
-<p>We've journeyed through the core concepts:
-1.  <a href="01_pipeline_orchestration.md">Pipeline Orchestration</a>: The overall manager coordinating the steps.
-2.  <a href="02_node__pipeline_step_.md">Node (Pipeline Step)</a>: The specialized workers performing individual tasks.
-3.  <a href="03_shared_memory.md">Shared Memory</a>: The central dictionary for passing data between Nodes.
-4.  <a href="04_topic_processing_orchestrator.md">Topic Processing Orchestrator</a>: A specialized Node managing parallel topic analysis.
-5.  <a href="05_youtube_data_utilities.md">YouTube Data Utilities</a>: Tools for fetching data from YouTube.
-6.  <a href="06_llm_utility.md">LLM Utility</a>: Our interface for talking to the AI.
-7.  <a href="07_html_generation.md">HTML Generation</a>: Creating the final user-friendly report.
-8.  <a href="08_logging.md">Logging</a>: Recording the program's journey.</p>
+<p>We've journeyed through the core concepts:</p>
+
+<ol>
+<li><a rel="noopener" target="_blank" href="01_pipeline_orchestration.md">Pipeline Orchestration</a>: The overall manager coordinating the steps.</li>
+<li><a rel="noopener" target="_blank" href="02_node__pipeline_step_.md">Node (Pipeline Step)</a>: The specialized workers performing individual tasks.</li>
+<li><a rel="noopener" target="_blank" href="03_shared_memory.md">Shared Memory</a>: The central dictionary for passing data between Nodes.</li>
+<li><a rel="noopener" target="_blank" href="04_topic_processing_orchestrator.md">Topic Processing Orchestrator</a>: A specialized Node managing parallel topic analysis.</li>
+<li><a rel="noopener" target="_blank" href="05_youtube_data_utilities.md">YouTube Data Utilities</a>: Tools for fetching data from YouTube.</li>
+<li><a rel="noopener" target="_blank" href="06_llm_utility.md">LLM Utility</a>: Our interface for talking to the AI.</li>
+<li><a rel="noopener" target="_blank" href="07_html_generation.md">HTML Generation</a>: Creating the final user-friendly report.</li>
+<li><a rel="noopener" target="_blank" href="08_logging.md">Logging</a>: Recording the program's journey.</li>
+</ol>
 
 <p>We hope this gives you a solid foundation for understanding how <code>pf1</code> works and empowers you to explore, modify, and contribute to the project. Happy coding!</p>
 
 <hr />
 
-<p>Generated by <a href="https://github.com/The-Pocket/Tutorial-Codebase-Knowledge">AI Codebase Knowledge Builder</a></p>
+<p>Generated by <a rel="noopener" target="_blank" href="https://github.com/The-Pocket/Tutorial-Codebase-Knowledge">AI Codebase Knowledge Builder</a></p>
 
-            
-        <div class="navigation">
-            <a class="nav-link" href="07_html_generation.html">&larr; Previous</a>
-            <a class="nav-link" href="index.html">Index</a>
-            <a class="nav-link" href="index.html">Next &rarr;</a>
-        </div>
-        
-        </body>
-        </html>
-        
+    <div class="navigation">
+        <a class="nav-link" href="07_html_generation.html">&larr; Previous</a>
+        <a class="nav-link" href="index.html">Index</a>
+        <a class="nav-link" href="index.html">Next &rarr;</a>
+    </div>
+</body>
+</html>

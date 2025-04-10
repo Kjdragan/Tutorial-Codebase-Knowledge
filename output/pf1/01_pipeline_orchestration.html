@@ -1,94 +1,123 @@
-
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>01 Pipeline Orchestration</title>
-            
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                line-height: 1.6;
-                max-width: 900px;
-                margin: 0 auto;
-                padding: 20px;
-            }
-            pre {
-                background-color: #f5f5f5;
-                padding: 15px;
-                border-radius: 5px;
-                overflow-x: auto;
-            }
-            code {
-                background-color: #f5f5f5;
-                padding: 2px 5px;
-                border-radius: 3px;
-            }
-            .navigation {
-                display: flex;
-                justify-content: space-between;
-                margin: 20px 0;
-                padding: 10px;
-                background-color: #f5f5f5;
-                border-radius: 5px;
-            }
-            .nav-link {
-                text-decoration: none;
-                color: #0366d6;
-            }
-            .nav-link:hover {
-                text-decoration: underline;
-            }
-            .mermaid {
-                text-align: center;
-                margin: 20px 0;
-            }
-        </style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>01 Pipeline Orchestration</title>
+    <style>
+        pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f8f8f8; }
+.highlight .c { color: #3D7B7B; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #F00 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666 } /* Operator */
+.highlight .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #9C6500 } /* Comment.Preproc */
+.highlight .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #E40000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #008400 } /* Generic.Inserted */
+.highlight .go { color: #717171 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #04D } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #687822 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #00F; font-weight: bold } /* Name.Class */
+.highlight .no { color: #800 } /* Name.Constant */
+.highlight .nd { color: #A2F } /* Name.Decorator */
+.highlight .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #00F } /* Name.Function */
+.highlight .nl { color: #767600 } /* Name.Label */
+.highlight .nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #BBB } /* Text.Whitespace */
+.highlight .mb { color: #666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666 } /* Literal.Number.Float */
+.highlight .mh { color: #666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #A45A77 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #00F } /* Name.Function.Magic */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
+.highlight .il { color: #666 } /* Literal.Number.Integer.Long */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f6f8fa;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navigation">
         
-            
-        <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                mermaid.initialize({
-                    startOnLoad: true,
-                    theme: 'default',
-                    securityLevel: 'loose',
-                    flowchart: {
-                        useMaxWidth: false,
-                        htmlLabels: true
-                    },
-                    sequence: {
-                        useMaxWidth: false,
-                        htmlLabels: true,
-                        diagramMarginX: 50,
-                        diagramMarginY: 10,
-                        boxMargin: 10
-                    }
-                });
-            });
-        </script>
-        
-        </head>
-        <body>
-            
-        <div class="navigation">
-            
-            <a class="nav-link" href="index.html">Index</a>
-            <a class="nav-link" href="02_node__pipeline_step_.html">Next &rarr;</a>
-        </div>
-        
-            <h1>Chapter 1: Pipeline Orchestration</h1>
+        <a class="nav-link" href="index.html">Index</a>
+        <a class="nav-link" href="02_node__pipeline_step_.html">Next &rarr;</a>
+    </div>
+    <h1>Chapter 1: Pipeline Orchestration</h1>
 
 <p>Welcome to the <code>pf1</code> YouTube Summarizer project! We're thrilled to have you here. Our goal is to build a tool that takes a YouTube video URL and automatically creates a nice summary report.</p>
 
 <p>Imagine you want to build a car. You don't just magically get a car! You need an assembly line: a frame is built, then the engine is added, then the wheels, the doors, the paint, and so on. Each step builds upon the previous one, and they have to happen in the right order.</p>
 
-<p>Our YouTube summarizer works similarly. We can't just get a summary instantly from a URL. We need a series of steps:
-1.  Get information <em>about</em> the video (like its title).
-2.  Extract the spoken words (the transcript).
-3.  Figure out the main topics discussed.
-4.  Analyze each topic (maybe generate questions and answers).
-5.  Put everything together into a readable report (like an HTML page).</p>
+<p>Our YouTube summarizer works similarly. We can't just get a summary instantly from a URL. We need a series of steps:</p>
+
+<ol>
+<li>Get information <em>about</em> the video (like its title).</li>
+<li>Extract the spoken words (the transcript).</li>
+<li>Figure out the main topics discussed.</li>
+<li>Analyze each topic (maybe generate questions and answers).</li>
+<li>Put everything together into a readable report (like an HTML page).</li>
+</ol>
 
 <p>This sequence of steps is what we call a <strong>Pipeline</strong>.</p>
 
@@ -110,7 +139,7 @@
 
 <p>In our project (<code>pf1</code>), the main orchestrator is a function called <code>run_pipeline</code> located in the <code>src/main.py</code> file. This function defines the sequence of steps needed to go from a YouTube URL to a final summary report.</p>
 
-<p>It calls upon different specialists, which we call <strong>Nodes</strong>. Each Node is responsible for one specific task in the pipeline. We'll learn all about Nodes in <a href="02_node__pipeline_step_.md">Chapter 2: Node (Pipeline Step)</a>.</p>
+<p>It calls upon different specialists, which we call <strong>Nodes</strong>. Each Node is responsible for one specific task in the pipeline. We'll learn all about Nodes in <a rel="noopener" target="_blank" href="02_node__pipeline_step_.md">Chapter 2: Node (Pipeline Step)</a>.</p>
 
 <p>For now, just know that <code>run_pipeline</code> calls these Nodes one after another.</p>
 
@@ -150,7 +179,7 @@
 
 <p>How does the output from <code>run_input_processing_node</code> get to <code>run_content_extraction_node</code>? The orchestrator uses a central place to store the results from each step. Think of it like a shared notebook or clipboard that each specialist Node can read from and write to.</p>
 
-<p>In our project, we call this the <a href="03_shared_memory.md">Shared Memory</a>. The <code>run_pipeline</code> function initializes this shared memory (initially just containing the input URL) and passes it to the first Node. That Node does its work, adds its results to the shared memory, and returns it. The orchestrator then passes the updated shared memory to the next Node, and so on. We'll dive deeper into this in <a href="03_shared_memory.md">Chapter 3</a>.</p>
+<p>In our project, we call this the <a rel="noopener" target="_blank" href="03_shared_memory.md">Shared Memory</a>. The <code>run_pipeline</code> function initializes this shared memory (initially just containing the input URL) and passes it to the first Node. That Node does its work, adds its results to the shared memory, and returns it. The orchestrator then passes the updated shared memory to the next Node, and so on. We'll dive deeper into this in <a rel="noopener" target="_blank" href="03_shared_memory.md">Chapter 3</a>.</p>
 
 <h2>Visualizing the Flow</h2>
 
@@ -235,12 +264,15 @@
 </code></pre>
 </div>
 
-<p>This block shows the pattern:
-1.  Log that the step is starting.
-2.  Create an instance of the specific Node needed (e.g., <code>InputProcessingNode</code>), passing it the current <code>shared_memory</code>.
-3.  Call the Node's <code>run()</code> method. The Node performs its task and returns the <em>updated</em> <code>shared_memory</code>.
-4.  Update the <code>shared_memory</code> variable in <code>run_pipeline</code> with the returned value.
-5.  Check for errors. If an error occurred, the pipeline stops.</p>
+<p>This block shows the pattern:</p>
+
+<ol>
+<li>Log that the step is starting.</li>
+<li>Create an instance of the specific Node needed (e.g., <code>InputProcessingNode</code>), passing it the current <code>shared_memory</code>.</li>
+<li>Call the Node's <code>run()</code> method. The Node performs its task and returns the <em>updated</em> <code>shared_memory</code>.</li>
+<li>Update the <code>shared_memory</code> variable in <code>run_pipeline</code> with the returned value.</li>
+<li>Check for errors. If an error occurred, the pipeline stops.</li>
+</ol>
 
 <p>This pattern repeats for all the steps:</p>
 
@@ -292,28 +324,28 @@
 
 <p>In this chapter, we learned about <strong>Pipeline Orchestration</strong>. It's the process of managing a sequence of steps (a pipeline) to achieve a complex goal, like summarizing a YouTube video.</p>
 
-<p>We saw that orchestration is crucial for:
-*   Ensuring steps run in the correct order.
-*   Breaking down a large task into smaller, manageable parts (Nodes).
-*   Passing information between steps using a shared space (Shared Memory).</p>
+<p>We saw that orchestration is crucial for:</p>
+
+<ul>
+<li>Ensuring steps run in the correct order.</li>
+<li>Breaking down a large task into smaller, manageable parts (Nodes).</li>
+<li>Passing information between steps using a shared space (Shared Memory).</li>
+</ul>
 
 <p>In our <code>pf1</code> project, the <code>run_pipeline</code> function in <code>src/main.py</code> acts as our orchestrator, calling different <strong>Nodes</strong> in sequence and managing the data flow via <strong>Shared Memory</strong>.</p>
 
 <p>Now that we understand the overall flow managed by the orchestrator, let's zoom in on the individual specialists that perform the actual work: the Nodes.</p>
 
-<p>Ready to meet the specialists? Let's move on to <a href="02_node__pipeline_step_.md">Chapter 2: Node (Pipeline Step)</a>!</p>
+<p>Ready to meet the specialists? Let's move on to <a rel="noopener" target="_blank" href="02_node__pipeline_step_.md">Chapter 2: Node (Pipeline Step)</a>!</p>
 
 <hr />
 
-<p>Generated by <a href="https://github.com/The-Pocket/Tutorial-Codebase-Knowledge">AI Codebase Knowledge Builder</a></p>
+<p>Generated by <a rel="noopener" target="_blank" href="https://github.com/The-Pocket/Tutorial-Codebase-Knowledge">AI Codebase Knowledge Builder</a></p>
 
-            
-        <div class="navigation">
-            
-            <a class="nav-link" href="index.html">Index</a>
-            <a class="nav-link" href="02_node__pipeline_step_.html">Next &rarr;</a>
-        </div>
+    <div class="navigation">
         
-        </body>
-        </html>
-        
+        <a class="nav-link" href="index.html">Index</a>
+        <a class="nav-link" href="02_node__pipeline_step_.html">Next &rarr;</a>
+    </div>
+</body>
+</html>

@@ -1,91 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>04 Topic Processing Orchestrator</title>
+    <style>
+        pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f8f8f8; }
+.highlight .c { color: #3D7B7B; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #F00 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666 } /* Operator */
+.highlight .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #9C6500 } /* Comment.Preproc */
+.highlight .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #E40000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #008400 } /* Generic.Inserted */
+.highlight .go { color: #717171 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #04D } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #687822 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #00F; font-weight: bold } /* Name.Class */
+.highlight .no { color: #800 } /* Name.Constant */
+.highlight .nd { color: #A2F } /* Name.Decorator */
+.highlight .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #00F } /* Name.Function */
+.highlight .nl { color: #767600 } /* Name.Label */
+.highlight .nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #BBB } /* Text.Whitespace */
+.highlight .mb { color: #666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666 } /* Literal.Number.Float */
+.highlight .mh { color: #666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #A45A77 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #00F } /* Name.Function.Magic */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
+.highlight .il { color: #666 } /* Literal.Number.Integer.Long */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f6f8fa;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navigation">
+        <a class="nav-link" href="03_shared_memory.html">&larr; Previous</a>
+        <a class="nav-link" href="index.html">Index</a>
+        <a class="nav-link" href="05_youtube_data_utilities.html">Next &rarr;</a>
+    </div>
+    <h1>Chapter 4: Topic Processing Orchestrator</h1>
 
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>04 Topic Processing Orchestrator</title>
-            
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                line-height: 1.6;
-                max-width: 900px;
-                margin: 0 auto;
-                padding: 20px;
-            }
-            pre {
-                background-color: #f5f5f5;
-                padding: 15px;
-                border-radius: 5px;
-                overflow-x: auto;
-            }
-            code {
-                background-color: #f5f5f5;
-                padding: 2px 5px;
-                border-radius: 3px;
-            }
-            .navigation {
-                display: flex;
-                justify-content: space-between;
-                margin: 20px 0;
-                padding: 10px;
-                background-color: #f5f5f5;
-                border-radius: 5px;
-            }
-            .nav-link {
-                text-decoration: none;
-                color: #0366d6;
-            }
-            .nav-link:hover {
-                text-decoration: underline;
-            }
-            .mermaid {
-                text-align: center;
-                margin: 20px 0;
-            }
-        </style>
-        
-            
-        <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                mermaid.initialize({
-                    startOnLoad: true,
-                    theme: 'default',
-                    securityLevel: 'loose',
-                    flowchart: {
-                        useMaxWidth: false,
-                        htmlLabels: true
-                    },
-                    sequence: {
-                        useMaxWidth: false,
-                        htmlLabels: true,
-                        diagramMarginX: 50,
-                        diagramMarginY: 10,
-                        boxMargin: 10
-                    }
-                });
-            });
-        </script>
-        
-        </head>
-        <body>
-            
-        <div class="navigation">
-            <a class="nav-link" href="03_shared_memory.html">&larr; Previous</a>
-            <a class="nav-link" href="index.html">Index</a>
-            <a class="nav-link" href="05_youtube_data_utilities.html">Next &rarr;</a>
-        </div>
-        
-            <h1>Chapter 4: Topic Processing Orchestrator</h1>
+<p>Welcome back! In <a rel="noopener" target="_blank" href="03_shared_memory.md">Chapter 3: Shared Memory</a>, we learned how different steps (Nodes) in our pipeline share information using a central dictionary called <code>shared_memory</code>. We saw how the <code>TopicExtractionNode</code> adds a list of topics it found into this shared space.</p>
 
-<p>Welcome back! In <a href="03_shared_memory.md">Chapter 3: Shared Memory</a>, we learned how different steps (Nodes) in our pipeline share information using a central dictionary called <code>shared_memory</code>. We saw how the <code>TopicExtractionNode</code> adds a list of topics it found into this shared space.</p>
+<p>Now, imagine our video analyzer found 10 different topics in a long video! For each topic, we want to:</p>
 
-<p>Now, imagine our video analyzer found 10 different topics in a long video! For each topic, we want to:
-1.  Generate some Questions and Answers (Q&amp;A).
-2.  Create a super simple "Explain Like I'm 5" (ELI5) summary.</p>
+<ol>
+<li>Generate some Questions and Answers (Q&amp;A).</li>
+<li>Create a super simple "Explain Like I'm 5" (ELI5) summary.</li>
+</ol>
 
-<p>If we did this one topic at a time, it could take a while, especially since generating Q&amp;A and ELI5 often involves asking an AI model (like the ones we'll see in <a href="06_llm_utility.md">Chapter 6: LLM Utility</a>), which can be slow. How can we speed this up?</p>
+<p>If we did this one topic at a time, it could take a while, especially since generating Q&amp;A and ELI5 often involves asking an AI model (like the ones we'll see in <a rel="noopener" target="_blank" href="06_llm_utility.md">Chapter 6: LLM Utility</a>), which can be slow. How can we speed this up?</p>
 
 <h2>The Problem: Analyzing Many Topics Takes Time</h2>
 
@@ -120,20 +149,23 @@ Simultaneously Start --&gt;        Topic 2 Analysis (Worker 2)  --&gt; Wait ~30s
                                 ... and so on ...
 </code></pre>
 
-<p>This parallel approach is sometimes called <strong>Map-Reduce</strong>:
-1.  <strong>Map:</strong> Assign (map) each piece of work (topic) to a worker (<code>TopicProcessorNode</code>).
-2.  <strong>Reduce:</strong> Collect (reduce) the results from all workers into a final combined output.</p>
+<p>This parallel approach is sometimes called <strong>Map-Reduce</strong>:</p>
+
+<ol>
+<li><strong>Map:</strong> Assign (map) each piece of work (topic) to a worker (<code>TopicProcessorNode</code>).</li>
+<li><strong>Reduce:</strong> Collect (reduce) the results from all workers into a final combined output.</li>
+</ol>
 
 <h2>How the Topic Orchestrator Fits In</h2>
 
-<p>The <code>TopicOrchestratorNode</code> is just another <a href="02_node__pipeline_step_.md">Node (Pipeline Step)</a> in our main pipeline, run by the <a href="01_pipeline_orchestration.md">Pipeline Orchestration</a> (<code>run_pipeline</code> function).</p>
+<p>The <code>TopicOrchestratorNode</code> is just another <a rel="noopener" target="_blank" href="02_node__pipeline_step_.md">Node (Pipeline Step)</a> in our main pipeline, run by the <a rel="noopener" target="_blank" href="01_pipeline_orchestration.md">Pipeline Orchestration</a> (<code>run_pipeline</code> function).</p>
 
 <p>Here's what it does in the pipeline flow:</p>
 
 <ol>
-<li><strong>Input:</strong> It reads the <code>topics</code> (a list of strings) and the full <code>transcript</code> (a long string) from the <a href="03_shared_memory.md">Shared Memory</a>, put there by previous Nodes.</li>
+<li><strong>Input:</strong> It reads the <code>topics</code> (a list of strings) and the full <code>transcript</code> (a long string) from the <a rel="noopener" target="_blank" href="03_shared_memory.md">Shared Memory</a>, put there by previous Nodes.</li>
 <li><strong>Processing (Parallel):</strong> It performs the "Map-Reduce" strategy described above, using multiple <code>TopicProcessorNode</code> instances internally.</li>
-<li><strong>Output:</strong> It writes the collected results back into <a href="03_shared_memory.md">Shared Memory</a>. The results are typically stored in dictionaries keyed by topic, for example:
+<li><strong>Output:</strong> It writes the collected results back into <a rel="noopener" target="_blank" href="03_shared_memory.md">Shared Memory</a>. The results are typically stored in dictionaries keyed by topic, for example:
 <ul>
 <li><code>"qa_pairs"</code>: A dictionary where keys are topics and values are lists of Q&amp;A for that topic.</li>
 <li><code>"eli5_content"</code>: A dictionary where keys are topics and values are the ELI5 explanations.</li>
@@ -174,11 +206,14 @@ Simultaneously Start --&gt;        Topic 2 Analysis (Worker 2)  --&gt; Wait ~30s
 </code></pre>
 </div>
 
-<p>In this example:
-*   We create <code>TopicOrchestratorNode</code>, passing the current <code>shared_memory</code> (which must contain <code>"topics"</code> and <code>"transcript"</code>).
-*   We also tell it it can use up to <code>max_workers=3</code> parallel workers.
-*   Calling <code>topic_orchestrator.run()</code> kicks off the parallel processing.
-*   After it finishes, the <code>shared_memory</code> dictionary is updated with the results (<code>"qa_pairs"</code>, <code>"eli5_content"</code>, etc.).</p>
+<p>In this example:</p>
+
+<ul>
+<li>We create <code>TopicOrchestratorNode</code>, passing the current <code>shared_memory</code> (which must contain <code>"topics"</code> and <code>"transcript"</code>).</li>
+<li>We also tell it it can use up to <code>max_workers=3</code> parallel workers.</li>
+<li>Calling <code>topic_orchestrator.run()</code> kicks off the parallel processing.</li>
+<li>After it finishes, the <code>shared_memory</code> dictionary is updated with the results (<code>"qa_pairs"</code>, <code>"eli5_content"</code>, etc.).</li>
+</ul>
 
 <h2>Under the Hood: How Parallelism Works</h2>
 
@@ -207,17 +242,20 @@ Simultaneously Start --&gt;        Topic 2 Analysis (Worker 2)  --&gt; Wait ~30s
     TON--&gt;&gt;RP: Return updated SM
 </code></pre>
 
-<p>This diagram shows:
-1.  <code>run_pipeline</code> calls the <code>TopicOrchestratorNode</code> (<code>TON</code>).
-2.  <code>TON</code> reads the list of topics (e.g., T1, T2) from <code>Shared Memory</code>.
-3.  <code>TON</code> starts its <code>exec</code> phase, creating and launching worker <code>TopicProcessorNode</code>s (<code>TPN1</code>, <code>TPN2</code>) in parallel, one for each topic.
-4.  Each <code>TPN</code> does its work (generating Q&amp;A/ELI5 for its specific topic).
-5.  <code>TON</code> waits for all <code>TPN</code> workers to finish and collects their individual results.
-6.  <code>TON</code> combines these results and writes them back to <code>Shared Memory</code>.</p>
+<p>This diagram shows:</p>
+
+<ol>
+<li><code>run_pipeline</code> calls the <code>TopicOrchestratorNode</code> (<code>TON</code>).</li>
+<li><code>TON</code> reads the list of topics (e.g., T1, T2) from <code>Shared Memory</code>.</li>
+<li><code>TON</code> starts its <code>exec</code> phase, creating and launching worker <code>TopicProcessorNode</code>s (<code>TPN1</code>, <code>TPN2</code>) in parallel, one for each topic.</li>
+<li>Each <code>TPN</code> does its work (generating Q&amp;A/ELI5 for its specific topic).</li>
+<li><code>TON</code> waits for all <code>TPN</code> workers to finish and collects their individual results.</li>
+<li><code>TON</code> combines these results and writes them back to <code>Shared Memory</code>.</li>
+</ol>
 
 <h2>Diving into the Code (<code>src/nodes/topic_orchestrator_node.py</code>)</h2>
 
-<p>Let's peek inside the <code>TopicOrchestratorNode</code>. Remember, it follows the standard <a href="02_node__pipeline_step_.md">Node (Pipeline Step)</a> structure: <code>prep</code>, <code>exec</code>, <code>post</code>.</p>
+<p>Let's peek inside the <code>TopicOrchestratorNode</code>. Remember, it follows the standard <a rel="noopener" target="_blank" href="02_node__pipeline_step_.md">Node (Pipeline Step)</a> structure: <code>prep</code>, <code>exec</code>, <code>post</code>.</p>
 
 <p><strong>1. Preparation (<code>prep</code>)</strong></p>
 
@@ -392,26 +430,23 @@ Simultaneously Start --&gt;        Topic 2 Analysis (Worker 2)  --&gt; Wait ~30s
 <li><strong>Parallel Execution:</strong> Workers run simultaneously using threads, significantly speeding up the process.</li>
 <li><strong>Map Phase:</strong> Assigns tasks to workers and runs them.</li>
 <li><strong>Reduce Phase:</strong> Collects results from all workers and combines them.</li>
-<li><strong>Integration:</strong> It reads <code>topics</code> and <code>transcript</code> from <a href="03_shared_memory.md">Shared Memory</a> and writes back <code>qa_pairs</code> and <code>eli5_content</code>.</li>
+<li><strong>Integration:</strong> It reads <code>topics</code> and <code>transcript</code> from <a rel="noopener" target="_blank" href="03_shared_memory.md">Shared Memory</a> and writes back <code>qa_pairs</code> and <code>eli5_content</code>.</li>
 </ul>
 
 <p>This node demonstrates a more advanced pattern within our pipeline architecture, showing how we can optimize for performance.</p>
 
 <p>So far, we've seen how the pipeline flows, how individual nodes work, how they share data, and how we can use parallelism. But where does data like the transcript or video title actually come from? Next, we'll look at the tools used to interact with YouTube itself.</p>
 
-<p>Let's move on to <a href="05_youtube_data_utilities.md">Chapter 5: YouTube Data Utilities</a>!</p>
+<p>Let's move on to <a rel="noopener" target="_blank" href="05_youtube_data_utilities.md">Chapter 5: YouTube Data Utilities</a>!</p>
 
 <hr />
 
-<p>Generated by <a href="https://github.com/The-Pocket/Tutorial-Codebase-Knowledge">AI Codebase Knowledge Builder</a></p>
+<p>Generated by <a rel="noopener" target="_blank" href="https://github.com/The-Pocket/Tutorial-Codebase-Knowledge">AI Codebase Knowledge Builder</a></p>
 
-            
-        <div class="navigation">
-            <a class="nav-link" href="03_shared_memory.html">&larr; Previous</a>
-            <a class="nav-link" href="index.html">Index</a>
-            <a class="nav-link" href="05_youtube_data_utilities.html">Next &rarr;</a>
-        </div>
-        
-        </body>
-        </html>
-        
+    <div class="navigation">
+        <a class="nav-link" href="03_shared_memory.html">&larr; Previous</a>
+        <a class="nav-link" href="index.html">Index</a>
+        <a class="nav-link" href="05_youtube_data_utilities.html">Next &rarr;</a>
+    </div>
+</body>
+</html>

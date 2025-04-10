@@ -1,85 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>06 Llm Utility</title>
+    <style>
+        pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f8f8f8; }
+.highlight .c { color: #3D7B7B; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #F00 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666 } /* Operator */
+.highlight .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #9C6500 } /* Comment.Preproc */
+.highlight .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #E40000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #008400 } /* Generic.Inserted */
+.highlight .go { color: #717171 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #04D } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #687822 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #00F; font-weight: bold } /* Name.Class */
+.highlight .no { color: #800 } /* Name.Constant */
+.highlight .nd { color: #A2F } /* Name.Decorator */
+.highlight .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #00F } /* Name.Function */
+.highlight .nl { color: #767600 } /* Name.Label */
+.highlight .nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #BBB } /* Text.Whitespace */
+.highlight .mb { color: #666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666 } /* Literal.Number.Float */
+.highlight .mh { color: #666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #A45A77 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #00F } /* Name.Function.Magic */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
+.highlight .il { color: #666 } /* Literal.Number.Integer.Long */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f6f8fa;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navigation">
+        <a class="nav-link" href="05_youtube_data_utilities.html">&larr; Previous</a>
+        <a class="nav-link" href="index.html">Index</a>
+        <a class="nav-link" href="07_html_generation.html">Next &rarr;</a>
+    </div>
+    <h1>Chapter 6: LLM Utility</h1>
 
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>06 Llm Utility</title>
-            
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                line-height: 1.6;
-                max-width: 900px;
-                margin: 0 auto;
-                padding: 20px;
-            }
-            pre {
-                background-color: #f5f5f5;
-                padding: 15px;
-                border-radius: 5px;
-                overflow-x: auto;
-            }
-            code {
-                background-color: #f5f5f5;
-                padding: 2px 5px;
-                border-radius: 3px;
-            }
-            .navigation {
-                display: flex;
-                justify-content: space-between;
-                margin: 20px 0;
-                padding: 10px;
-                background-color: #f5f5f5;
-                border-radius: 5px;
-            }
-            .nav-link {
-                text-decoration: none;
-                color: #0366d6;
-            }
-            .nav-link:hover {
-                text-decoration: underline;
-            }
-            .mermaid {
-                text-align: center;
-                margin: 20px 0;
-            }
-        </style>
-        
-            
-        <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                mermaid.initialize({
-                    startOnLoad: true,
-                    theme: 'default',
-                    securityLevel: 'loose',
-                    flowchart: {
-                        useMaxWidth: false,
-                        htmlLabels: true
-                    },
-                    sequence: {
-                        useMaxWidth: false,
-                        htmlLabels: true,
-                        diagramMarginX: 50,
-                        diagramMarginY: 10,
-                        boxMargin: 10
-                    }
-                });
-            });
-        </script>
-        
-        </head>
-        <body>
-            
-        <div class="navigation">
-            <a class="nav-link" href="05_youtube_data_utilities.html">&larr; Previous</a>
-            <a class="nav-link" href="index.html">Index</a>
-            <a class="nav-link" href="07_html_generation.html">Next &rarr;</a>
-        </div>
-        
-            <h1>Chapter 6: LLM Utility</h1>
-
-<p>Welcome back! In <a href="05_youtube_data_utilities.md">Chapter 5: YouTube Data Utilities</a>, we saw how our project uses specialized tools to fetch raw data from YouTube, like the video's title and the full transcript (the spoken words). We have the text, but how do we make <em>sense</em> of it? How do we automatically figure out the main topics discussed, generate questions and answers about them, or create super-simple explanations?</p>
+<p>Welcome back! In <a rel="noopener" target="_blank" href="05_youtube_data_utilities.md">Chapter 5: YouTube Data Utilities</a>, we saw how our project uses specialized tools to fetch raw data from YouTube, like the video's title and the full transcript (the spoken words). We have the text, but how do we make <em>sense</em> of it? How do we automatically figure out the main topics discussed, generate questions and answers about them, or create super-simple explanations?</p>
 
 <p>That sounds like a job for a super-smart assistant!</p>
 
@@ -87,10 +113,13 @@
 
 <p>Imagine you have the complete script of a movie. Just reading the script doesn't automatically tell you the main plot points, the underlying themes, or answers to specific questions about the story. You need to <em>analyze</em> it.</p>
 
-<p>Similarly, our Nodes, like the <code>TopicExtractionNode</code> or the <code>TopicProcessorNode</code>, need to analyze the video transcript. They need to:
-*   Identify the core subjects being discussed.
-*   Maybe create questions a viewer might have about those subjects.
-*   Perhaps summarize a complex idea in simple terms.</p>
+<p>Similarly, our Nodes, like the <code>TopicExtractionNode</code> or the <code>TopicProcessorNode</code>, need to analyze the video transcript. They need to:</p>
+
+<ul>
+<li>Identify the core subjects being discussed.</li>
+<li>Maybe create questions a viewer might have about those subjects.</li>
+<li>Perhaps summarize a complex idea in simple terms.</li>
+</ul>
 
 <p>Doing this analysis accurately and creatively requires advanced understanding of language and context – something traditional programming struggles with. We need help from a powerful Artificial Intelligence (AI).</p>
 
@@ -114,10 +143,13 @@
 
 <p>When you call an expert, you don't just say "Hello?". You need to give them context and clearly state what you need. When we talk to an LLM, this is called a <strong>Prompt</strong>.</p>
 
-<p>A prompt typically includes:
-1.  <strong>Instructions:</strong> What task should the AI perform? (e.g., "Identify the main topics", "Generate questions and answers", "Explain this simply")
-2.  <strong>Context:</strong> What information does the AI need to do the task? (e.g., the video transcript segment, the specific topic name)
-3.  <strong>Format Constraints (Optional):</strong> How should the AI format its answer? (e.g., "Respond with ONLY a JSON list", "Keep it under 100 words")</p>
+<p>A prompt typically includes:</p>
+
+<ol>
+<li><strong>Instructions:</strong> What task should the AI perform? (e.g., "Identify the main topics", "Generate questions and answers", "Explain this simply")</li>
+<li><strong>Context:</strong> What information does the AI need to do the task? (e.g., the video transcript segment, the specific topic name)</li>
+<li><strong>Format Constraints (Optional):</strong> How should the AI format its answer? (e.g., "Respond with ONLY a JSON list", "Keep it under 100 words")</li>
+</ol>
 
 <p>Here's a simple example of a prompt the <code>TopicExtractionNode</code> might create:</p>
 
@@ -190,14 +222,19 @@ Respond with ONLY a JSON array of topic strings, like [&quot;Topic A&quot;, &quo
 </code></pre>
 </div>
 
-<p>In this example:
-1.  The Node constructs the <code>prompt</code> string with instructions and the relevant <code>chunk</code> of the transcript.
-2.  It makes a single call to <code>call_llm</code>, passing the <code>prompt</code>. It can also pass optional parameters like:
-    *   <code>temperature</code>: Controls creativity. Lower values (like 0.3) make the output more predictable and focused; higher values make it more random.
-    *   <code>max_tokens</code>: Limits how long the AI's response can be.
-    *   <code>timeout</code>: Sets a maximum time to wait for the AI to respond.
-3.  The <code>call_llm</code> function handles all the communication complexity. It returns the AI's response as a simple text string (<code>response_text</code>).
-4.  The Node then processes this <code>response_text</code> (e.g., parsing it if it expects JSON).</p>
+<p>In this example:</p>
+
+<ol>
+<li>The Node constructs the <code>prompt</code> string with instructions and the relevant <code>chunk</code> of the transcript.</li>
+<li>It makes a single call to <code>call_llm</code>, passing the <code>prompt</code>. It can also pass optional parameters like:
+<ul>
+<li><code>temperature</code>: Controls creativity. Lower values (like 0.3) make the output more predictable and focused; higher values make it more random.</li>
+<li><code>max_tokens</code>: Limits how long the AI's response can be.</li>
+<li><code>timeout</code>: Sets a maximum time to wait for the AI to respond.</li>
+</ul></li>
+<li>The <code>call_llm</code> function handles all the communication complexity. It returns the AI's response as a simple text string (<code>response_text</code>).</li>
+<li>The Node then processes this <code>response_text</code> (e.g., parsing it if it expects JSON).</li>
+</ol>
 
 <p>That's it! The Node doesn't need to worry about API keys, network requests, or complex error handling for the AI communication itself – the <code>call_llm</code> utility takes care of it.</p>
 
@@ -355,21 +392,18 @@ Respond with ONLY a JSON array of topic strings, like [&quot;Topic A&quot;, &quo
 
 <p>This utility is a key component, enabling sophisticated analysis and content generation within our pipeline. Without it, tasks like topic extraction or creating ELI5 summaries would be much harder!</p>
 
-<p>Now that we've gathered video info (<a href="05_youtube_data_utilities.md">Chapter 5</a>), extracted the transcript, and analyzed it using the LLM (<a href="06_llm_utility.md">Chapter 6</a>) to get topics, Q&amp;A, and summaries stored in <a href="03_shared_memory.md">Shared Memory</a>, how do we present all this information nicely to the user?</p>
+<p>Now that we've gathered video info (<a rel="noopener" target="_blank" href="05_youtube_data_utilities.md">Chapter 5</a>), extracted the transcript, and analyzed it using the LLM (<a rel="noopener" target="_blank" href="06_llm_utility.md">Chapter 6</a>) to get topics, Q&amp;A, and summaries stored in <a rel="noopener" target="_blank" href="03_shared_memory.md">Shared Memory</a>, how do we present all this information nicely to the user?</p>
 
-<p>Let's move on to the final step: putting everything together into a user-friendly report with <a href="07_html_generation.md">Chapter 7: HTML Generation</a>!</p>
+<p>Let's move on to the final step: putting everything together into a user-friendly report with <a rel="noopener" target="_blank" href="07_html_generation.md">Chapter 7: HTML Generation</a>!</p>
 
 <hr />
 
-<p>Generated by <a href="https://github.com/The-Pocket/Tutorial-Codebase-Knowledge">AI Codebase Knowledge Builder</a></p>
+<p>Generated by <a rel="noopener" target="_blank" href="https://github.com/The-Pocket/Tutorial-Codebase-Knowledge">AI Codebase Knowledge Builder</a></p>
 
-            
-        <div class="navigation">
-            <a class="nav-link" href="05_youtube_data_utilities.html">&larr; Previous</a>
-            <a class="nav-link" href="index.html">Index</a>
-            <a class="nav-link" href="07_html_generation.html">Next &rarr;</a>
-        </div>
-        
-        </body>
-        </html>
-        
+    <div class="navigation">
+        <a class="nav-link" href="05_youtube_data_utilities.html">&larr; Previous</a>
+        <a class="nav-link" href="index.html">Index</a>
+        <a class="nav-link" href="07_html_generation.html">Next &rarr;</a>
+    </div>
+</body>
+</html>

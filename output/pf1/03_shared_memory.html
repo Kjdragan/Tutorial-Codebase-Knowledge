@@ -1,94 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>03 Shared Memory</title>
+    <style>
+        pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f8f8f8; }
+.highlight .c { color: #3D7B7B; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #F00 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666 } /* Operator */
+.highlight .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #9C6500 } /* Comment.Preproc */
+.highlight .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #E40000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #008400 } /* Generic.Inserted */
+.highlight .go { color: #717171 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #04D } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #687822 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #00F; font-weight: bold } /* Name.Class */
+.highlight .no { color: #800 } /* Name.Constant */
+.highlight .nd { color: #A2F } /* Name.Decorator */
+.highlight .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #00F } /* Name.Function */
+.highlight .nl { color: #767600 } /* Name.Label */
+.highlight .nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #BBB } /* Text.Whitespace */
+.highlight .mb { color: #666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666 } /* Literal.Number.Float */
+.highlight .mh { color: #666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #A45A77 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #00F } /* Name.Function.Magic */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
+.highlight .il { color: #666 } /* Literal.Number.Integer.Long */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f6f8fa;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navigation">
+        <a class="nav-link" href="02_node__pipeline_step_.html">&larr; Previous</a>
+        <a class="nav-link" href="index.html">Index</a>
+        <a class="nav-link" href="04_topic_processing_orchestrator.html">Next &rarr;</a>
+    </div>
+    <h1>Chapter 3: Shared Memory</h1>
 
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>03 Shared Memory</title>
-            
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                line-height: 1.6;
-                max-width: 900px;
-                margin: 0 auto;
-                padding: 20px;
-            }
-            pre {
-                background-color: #f5f5f5;
-                padding: 15px;
-                border-radius: 5px;
-                overflow-x: auto;
-            }
-            code {
-                background-color: #f5f5f5;
-                padding: 2px 5px;
-                border-radius: 3px;
-            }
-            .navigation {
-                display: flex;
-                justify-content: space-between;
-                margin: 20px 0;
-                padding: 10px;
-                background-color: #f5f5f5;
-                border-radius: 5px;
-            }
-            .nav-link {
-                text-decoration: none;
-                color: #0366d6;
-            }
-            .nav-link:hover {
-                text-decoration: underline;
-            }
-            .mermaid {
-                text-align: center;
-                margin: 20px 0;
-            }
-        </style>
-        
-            
-        <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                mermaid.initialize({
-                    startOnLoad: true,
-                    theme: 'default',
-                    securityLevel: 'loose',
-                    flowchart: {
-                        useMaxWidth: false,
-                        htmlLabels: true
-                    },
-                    sequence: {
-                        useMaxWidth: false,
-                        htmlLabels: true,
-                        diagramMarginX: 50,
-                        diagramMarginY: 10,
-                        boxMargin: 10
-                    }
-                });
-            });
-        </script>
-        
-        </head>
-        <body>
-            
-        <div class="navigation">
-            <a class="nav-link" href="02_node__pipeline_step_.html">&larr; Previous</a>
-            <a class="nav-link" href="index.html">Index</a>
-            <a class="nav-link" href="04_topic_processing_orchestrator.html">Next &rarr;</a>
-        </div>
-        
-            <h1>Chapter 3: Shared Memory</h1>
-
-<p>In <a href="01_pipeline_orchestration.md">Chapter 1: Pipeline Orchestration</a>, we saw our pipeline manager (<code>run_pipeline</code>) coordinating the different steps. In <a href="02_node__pipeline_step_.md">Chapter 2: Node (Pipeline Step)</a>, we met the specialized workers (Nodes) that perform each task, like getting the video transcript or finding topics.</p>
+<p>In <a rel="noopener" target="_blank" href="01_pipeline_orchestration.md">Chapter 1: Pipeline Orchestration</a>, we saw our pipeline manager (<code>run_pipeline</code>) coordinating the different steps. In <a rel="noopener" target="_blank" href="02_node__pipeline_step_.md">Chapter 2: Node (Pipeline Step)</a>, we met the specialized workers (Nodes) that perform each task, like getting the video transcript or finding topics.</p>
 
 <p>But how does the "transcript extractor" Node hand over the transcript it found to the "topic finder" Node? They need a way to pass information along the assembly line. That's where <strong>Shared Memory</strong> comes in!</p>
 
 <h2>The Problem: Passing Notes Between Workers</h2>
 
-<p>Imagine our assembly line again.
-1.  Worker A gets the video ID.
-2.  Worker B needs that video ID to fetch the transcript.
-3.  Worker C needs the transcript to find the main topics.</p>
+<p>Imagine our assembly line again.</p>
+
+<ol>
+<li>Worker A gets the video ID.</li>
+<li>Worker B needs that video ID to fetch the transcript.</li>
+<li>Worker C needs the transcript to find the main topics.</li>
+</ol>
 
 <p>How does Worker A tell Worker B the video ID? How does Worker B give the transcript to Worker C? They can't just shout across the factory floor! They need a reliable way to share their results.</p>
 
@@ -151,34 +180,37 @@
 <span class="n">shared_memory</span> <span class="o">=</span> <span class="n">input_node</span><span class="o">.</span><span class="n">run</span><span class="p">()</span> <span class="c1"># Node runs and returns the UPDATED dictionary</span>
 </code></pre>
 </div></li>
+
 <li><p><strong>Nodes Read and Write:</strong> Inside the Node's <code>run()</code> method, the <code>prep</code>, <code>exec</code>, and <code>post</code> methods interact with the dictionary:</p>
 
 <ul>
 <li><strong><code>prep()</code> reads:</strong> It looks up the keys it needs (e.g., the <code>InputProcessingNode</code> reads <code>"video_url"</code>).</li>
-<li><strong><code>post()</code> writes:</strong> After <code>exec()</code> does the work, <code>post()</code> adds the Node's results back into the <em>same</em> dictionary using new keys (e.g., the <code>InputProcessingNode</code> adds <code>"video_id"</code> and <code>"metadata"</code>).
-<div class="codehilite">
-<pre><span></span><code><span class="c1"># Inside InputProcessingNode (simplified)</span></li>
+<li><strong><code>post()</code> writes:</strong> After <code>exec()</code> does the work, <code>post()</code> adds the Node's results back into the <em>same</em> dictionary using new keys (e.g., the <code>InputProcessingNode</code> adds <code>"video_id"</code> and <code>"metadata"</code>).</li>
 </ul>
 
-<p><span class="k">def</span><span class="w"> </span><span class="nf">prep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="c1"># Read the URL provided by the orchestrator</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared<em>memory</span><span class="p">[</span><span class="s2">&quot;video</em>url&quot;</span><span class="p">]</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input node read URL: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></p>
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Inside InputProcessingNode (simplified)</span>
 
-<p><span class="k">def</span><span class="w"> </span><span class="nf">exec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">prep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># Read the URL provided by the orchestrator</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_memory</span><span class="p">[</span><span class="s2">&quot;video_url&quot;</span><span class="p">]</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input node read URL: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">exec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="c1"># Do work: Get video ID and metadata from the URL</span>
     <span class="c1"># (Simplified - actual logic calls YouTube utilities)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">video<em>id</em>result</span> <span class="o">=</span> <span class="s2">&quot;xyz123&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">video_id_result</span> <span class="o">=</span> <span class="s2">&quot;xyz123&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">metadata_result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Cool Video&quot;</span><span class="p">,</span> <span class="s2">&quot;author&quot;</span><span class="p">:</span> <span class="s2">&quot;Creator&quot;</span><span class="p">}</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Input node got video ID and metadata.&quot;</span><span class="p">)</span></p>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Input node got video ID and metadata.&quot;</span><span class="p">)</span>
 
-<p><span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="c1"># Write the results back to the dictionary</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">shared<em>memory</span><span class="p">[</span><span class="s2">&quot;video</em>id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">video<em>id</em>result</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">shared<em>memory</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</em>result</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">shared_memory</span><span class="p">[</span><span class="s2">&quot;video_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_id_result</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">shared_memory</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata_result</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Input node wrote video_id and metadata to shared memory.&quot;</span><span class="p">)</span>
 </code></pre>
-</div></p></li>
+</div></li>
+
 <li><p><strong>Passing Updated Memory:</strong> When the Node's <code>run()</code> method finishes, it returns the modified <code>shared_memory</code> dictionary back to the orchestrator. The orchestrator then passes this <em>updated</em> dictionary to the <em>next</em> Node in the sequence.</p>
 
 <div class="codehilite">
@@ -197,6 +229,7 @@
 <span class="n">shared_memory</span> <span class="o">=</span> <span class="n">content_node</span><span class="o">.</span><span class="n">run</span><span class="p">()</span> <span class="c1"># Get the next update</span>
 </code></pre>
 </div></li>
+
 <li><p><strong>Chain Reaction:</strong> This process repeats for every Node in the pipeline. Each Node reads the data left by previous Nodes and adds its own results.</p>
 
 <ul>
@@ -292,7 +325,7 @@
 
 <ul>
 <li>It's implemented as a simple <strong>Python dictionary</strong>.</li>
-<li>The pipeline orchestrator (<a href="01_pipeline_orchestration.md">Chapter 1</a>) creates it and passes it sequentially to each Node (<a href="02_node__pipeline_step_.md">Chapter 2</a>).</li>
+<li>The pipeline orchestrator (<a rel="noopener" target="_blank" href="01_pipeline_orchestration.md">Chapter 1</a>) creates it and passes it sequentially to each Node (<a rel="noopener" target="_blank" href="02_node__pipeline_step_.md">Chapter 2</a>).</li>
 <li>Nodes <strong>read</strong> the inputs they need from the dictionary using keys (usually in <code>prep</code>).</li>
 <li>Nodes <strong>write</strong> their results back into the dictionary using new keys (usually in <code>post</code>).</li>
 <li>This allows data like the video ID, transcript, and topics to flow smoothly from one step to the next.</li>
@@ -302,19 +335,16 @@
 
 <p>Now that we understand the basic building blocks (Orchestration, Nodes, Shared Memory), we can look at more specialized components. Next, we'll explore a Node that acts as a mini-orchestrator itself, managing the detailed processing of topics.</p>
 
-<p>Let's dive into the <a href="04_topic_processing_orchestrator.md">Topic Processing Orchestrator</a>!</p>
+<p>Let's dive into the <a rel="noopener" target="_blank" href="04_topic_processing_orchestrator.md">Topic Processing Orchestrator</a>!</p>
 
 <hr />
 
-<p>Generated by <a href="https://github.com/The-Pocket/Tutorial-Codebase-Knowledge">AI Codebase Knowledge Builder</a></p>
+<p>Generated by <a rel="noopener" target="_blank" href="https://github.com/The-Pocket/Tutorial-Codebase-Knowledge">AI Codebase Knowledge Builder</a></p>
 
-            
-        <div class="navigation">
-            <a class="nav-link" href="02_node__pipeline_step_.html">&larr; Previous</a>
-            <a class="nav-link" href="index.html">Index</a>
-            <a class="nav-link" href="04_topic_processing_orchestrator.html">Next &rarr;</a>
-        </div>
-        
-        </body>
-        </html>
-        
+    <div class="navigation">
+        <a class="nav-link" href="02_node__pipeline_step_.html">&larr; Previous</a>
+        <a class="nav-link" href="index.html">Index</a>
+        <a class="nav-link" href="04_topic_processing_orchestrator.html">Next &rarr;</a>
+    </div>
+</body>
+</html>

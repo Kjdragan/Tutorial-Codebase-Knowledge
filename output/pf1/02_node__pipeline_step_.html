@@ -1,85 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>02 Node  Pipeline Step </title>
+    <style>
+        pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f8f8f8; }
+.highlight .c { color: #3D7B7B; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #F00 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666 } /* Operator */
+.highlight .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #9C6500 } /* Comment.Preproc */
+.highlight .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #E40000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #008400 } /* Generic.Inserted */
+.highlight .go { color: #717171 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #04D } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #687822 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #00F; font-weight: bold } /* Name.Class */
+.highlight .no { color: #800 } /* Name.Constant */
+.highlight .nd { color: #A2F } /* Name.Decorator */
+.highlight .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #00F } /* Name.Function */
+.highlight .nl { color: #767600 } /* Name.Label */
+.highlight .nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #BBB } /* Text.Whitespace */
+.highlight .mb { color: #666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666 } /* Literal.Number.Float */
+.highlight .mh { color: #666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #A45A77 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #00F } /* Name.Function.Magic */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
+.highlight .il { color: #666 } /* Literal.Number.Integer.Long */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f6f8fa;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navigation">
+        <a class="nav-link" href="01_pipeline_orchestration.html">&larr; Previous</a>
+        <a class="nav-link" href="index.html">Index</a>
+        <a class="nav-link" href="03_shared_memory.html">Next &rarr;</a>
+    </div>
+    <h1>Chapter 2: Node (Pipeline Step)</h1>
 
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>02 Node  Pipeline Step </title>
-            
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                line-height: 1.6;
-                max-width: 900px;
-                margin: 0 auto;
-                padding: 20px;
-            }
-            pre {
-                background-color: #f5f5f5;
-                padding: 15px;
-                border-radius: 5px;
-                overflow-x: auto;
-            }
-            code {
-                background-color: #f5f5f5;
-                padding: 2px 5px;
-                border-radius: 3px;
-            }
-            .navigation {
-                display: flex;
-                justify-content: space-between;
-                margin: 20px 0;
-                padding: 10px;
-                background-color: #f5f5f5;
-                border-radius: 5px;
-            }
-            .nav-link {
-                text-decoration: none;
-                color: #0366d6;
-            }
-            .nav-link:hover {
-                text-decoration: underline;
-            }
-            .mermaid {
-                text-align: center;
-                margin: 20px 0;
-            }
-        </style>
-        
-            
-        <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                mermaid.initialize({
-                    startOnLoad: true,
-                    theme: 'default',
-                    securityLevel: 'loose',
-                    flowchart: {
-                        useMaxWidth: false,
-                        htmlLabels: true
-                    },
-                    sequence: {
-                        useMaxWidth: false,
-                        htmlLabels: true,
-                        diagramMarginX: 50,
-                        diagramMarginY: 10,
-                        boxMargin: 10
-                    }
-                });
-            });
-        </script>
-        
-        </head>
-        <body>
-            
-        <div class="navigation">
-            <a class="nav-link" href="01_pipeline_orchestration.html">&larr; Previous</a>
-            <a class="nav-link" href="index.html">Index</a>
-            <a class="nav-link" href="03_shared_memory.html">Next &rarr;</a>
-        </div>
-        
-            <h1>Chapter 2: Node (Pipeline Step)</h1>
-
-<p>In <a href="01_pipeline_orchestration.md">Chapter 1: Pipeline Orchestration</a>, we learned how our YouTube summarizer uses a pipeline, like an assembly line, to perform a series of steps. We saw that the <code>run_pipeline</code> function acts as the project manager, ensuring each step happens in the right order.</p>
+<p>In <a rel="noopener" target="_blank" href="01_pipeline_orchestration.md">Chapter 1: Pipeline Orchestration</a>, we learned how our YouTube summarizer uses a pipeline, like an assembly line, to perform a series of steps. We saw that the <code>run_pipeline</code> function acts as the project manager, ensuring each step happens in the right order.</p>
 
 <p>But who actually does the work at each step? If the orchestrator is the manager, who are the specialized workers on the assembly line? That's where <strong>Nodes</strong> come in!</p>
 
@@ -89,12 +115,15 @@
 
 <p>In our <code>pf1</code> project, a <strong>Node</strong> is like one of these specialized workers. It's a self-contained piece of code responsible for <strong>one specific task</strong> within the overall summarization pipeline.</p>
 
-<p>For example, we have Nodes dedicated to tasks like:
-*   Getting the video's title and ID (<code>InputProcessingNode</code>)
-*   Extracting the spoken words (transcript) (<code>ContentExtractionNode</code>)
-*   Figuring out the main topics discussed (<code>TopicExtractionNode</code>)
-*   Generating Questions &amp; Answers for a topic (<code>TopicProcessorNode</code>)
-*   Creating the final HTML report (<code>HTMLGenerationNode</code>)</p>
+<p>For example, we have Nodes dedicated to tasks like:</p>
+
+<ul>
+<li>Getting the video's title and ID (<code>InputProcessingNode</code>)</li>
+<li>Extracting the spoken words (transcript) (<code>ContentExtractionNode</code>)</li>
+<li>Figuring out the main topics discussed (<code>TopicExtractionNode</code>)</li>
+<li>Generating Questions &amp; Answers for a topic (<code>TopicProcessorNode</code>)</li>
+<li>Creating the final HTML report (<code>HTMLGenerationNode</code>)</li>
+</ul>
 
 <p>Each Node focuses <em>only</em> on its job. The <code>ContentExtractionNode</code> doesn't worry about how to generate HTML; it just focuses on getting the transcript accurately.</p>
 
@@ -121,7 +150,7 @@
 
 <ul>
 <li><strong>What it does:</strong> Gets the Node ready to work.</li>
-<li><strong>Analogy:</strong> The worker checks the instructions, grabs the necessary tools, and picks up the required input part (e.g., the video ID) from the shared workspace (<a href="03_shared_memory.md">Shared Memory</a>).</li>
+<li><strong>Analogy:</strong> The worker checks the instructions, grabs the necessary tools, and picks up the required input part (e.g., the video ID) from the shared workspace (<a rel="noopener" target="_blank" href="03_shared_memory.md">Shared Memory</a>).</li>
 <li><strong>In code:</strong> Reads necessary information from the <code>shared_memory</code> dictionary. Checks if the required inputs are actually there.</li>
 </ul></li>
 <li><p><strong><code>exec()</code> (Execute):</strong></p>
@@ -135,7 +164,7 @@
 
 <ul>
 <li><strong>What it does:</strong> Cleans up and stores the results.</li>
-<li><strong>Analogy:</strong> The worker puts their tools away and places the finished part (e.g., the extracted transcript) back onto the shared workspace (<a href="03_shared_memory.md">Shared Memory</a>) for the next Node.</li>
+<li><strong>Analogy:</strong> The worker puts their tools away and places the finished part (e.g., the extracted transcript) back onto the shared workspace (<a rel="noopener" target="_blank" href="03_shared_memory.md">Shared Memory</a>) for the next Node.</li>
 <li><strong>In code:</strong> Takes the results from the <code>exec</code> phase and adds them to the <code>shared_memory</code> dictionary using specific keys (like <code>"transcript"</code>). It might also do some final checks.</li>
 </ul></li>
 </ol>
@@ -144,7 +173,7 @@
 
 <h2>How Does a Node Run? The <code>run()</code> Method</h2>
 
-<p>So, how do these <code>prep</code>, <code>exec</code>, and <code>post</code> methods get called? The <a href="01_pipeline_orchestration.md">Pipeline Orchestration</a> (our <code>run_pipeline</code> function) doesn't call them individually. Instead, each Node has a <code>run()</code> method (provided by the <code>BaseNode</code> template).</p>
+<p>So, how do these <code>prep</code>, <code>exec</code>, and <code>post</code> methods get called? The <a rel="noopener" target="_blank" href="01_pipeline_orchestration.md">Pipeline Orchestration</a> (our <code>run_pipeline</code> function) doesn't call them individually. Instead, each Node has a <code>run()</code> method (provided by the <code>BaseNode</code> template).</p>
 
 <p>When the orchestrator wants a Node to do its job, it simply calls that Node's <code>run()</code> method. The <code>run()</code> method then takes care of calling <code>prep()</code>, <code>exec()</code>, and <code>post()</code> in the correct sequence.</p>
 
@@ -242,7 +271,7 @@
 
 <h2>How Nodes Fit Together (Recap)</h2>
 
-<p>As we saw in <a href="01_pipeline_orchestration.md">Chapter 1</a>, the <code>run_pipeline</code> function manages this flow:</p>
+<p>As we saw in <a rel="noopener" target="_blank" href="01_pipeline_orchestration.md">Chapter 1</a>, the <code>run_pipeline</code> function manages this flow:</p>
 
 <pre><code>sequenceDiagram
     participant RP as run_pipeline (Orchestrator)
@@ -295,19 +324,16 @@
 
 <p>Now we understand the orchestrator (the manager) and the Nodes (the workers). But how exactly does this "shared workspace" or "shared notebook" work where Nodes read inputs and write outputs?</p>
 
-<p>Let's dive into the details of that central data hub in <a href="03_shared_memory.md">Chapter 3: Shared Memory</a>!</p>
+<p>Let's dive into the details of that central data hub in <a rel="noopener" target="_blank" href="03_shared_memory.md">Chapter 3: Shared Memory</a>!</p>
 
 <hr />
 
-<p>Generated by <a href="https://github.com/The-Pocket/Tutorial-Codebase-Knowledge">AI Codebase Knowledge Builder</a></p>
+<p>Generated by <a rel="noopener" target="_blank" href="https://github.com/The-Pocket/Tutorial-Codebase-Knowledge">AI Codebase Knowledge Builder</a></p>
 
-            
-        <div class="navigation">
-            <a class="nav-link" href="01_pipeline_orchestration.html">&larr; Previous</a>
-            <a class="nav-link" href="index.html">Index</a>
-            <a class="nav-link" href="03_shared_memory.html">Next &rarr;</a>
-        </div>
-        
-        </body>
-        </html>
-        
+    <div class="navigation">
+        <a class="nav-link" href="01_pipeline_orchestration.html">&larr; Previous</a>
+        <a class="nav-link" href="index.html">Index</a>
+        <a class="nav-link" href="03_shared_memory.html">Next &rarr;</a>
+    </div>
+</body>
+</html>

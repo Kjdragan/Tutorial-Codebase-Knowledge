@@ -5,69 +5,69 @@
             <meta charset="utf-8">
             <title>08 Logging</title>
             
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        pre {
-            background-color: #f5f5f5;
-            padding: 15px;
-            border-radius: 5px;
-            overflow-x: auto;
-        }
-        code {
-            background-color: #f5f5f5;
-            padding: 2px 5px;
-            border-radius: 3px;
-        }
-        .navigation {
-            display: flex;
-            justify-content: space-between;
-            margin: 20px 0;
-            padding: 10px;
-            background-color: #f5f5f5;
-            border-radius: 5px;
-        }
-        .nav-link {
-            text-decoration: none;
-            color: #0366d6;
-        }
-        .nav-link:hover {
-            text-decoration: underline;
-        }
-        .mermaid {
-            text-align: center;
-            margin: 20px 0;
-        }
-    </style>
-    
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                max-width: 900px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            pre {
+                background-color: #f5f5f5;
+                padding: 15px;
+                border-radius: 5px;
+                overflow-x: auto;
+            }
+            code {
+                background-color: #f5f5f5;
+                padding: 2px 5px;
+                border-radius: 3px;
+            }
+            .navigation {
+                display: flex;
+                justify-content: space-between;
+                margin: 20px 0;
+                padding: 10px;
+                background-color: #f5f5f5;
+                border-radius: 5px;
+            }
+            .nav-link {
+                text-decoration: none;
+                color: #0366d6;
+            }
+            .nav-link:hover {
+                text-decoration: underline;
+            }
+            .mermaid {
+                text-align: center;
+                margin: 20px 0;
+            }
+        </style>
+        
             
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            mermaid.initialize({
-                startOnLoad: true,
-                theme: 'default',
-                securityLevel: 'loose',
-                flowchart: {
-                    useMaxWidth: false,
-                    htmlLabels: true
-                },
-                sequence: {
-                    useMaxWidth: false,
-                    htmlLabels: true,
-                    diagramMarginX: 50,
-                    diagramMarginY: 10,
-                    boxMargin: 10
-                }
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                mermaid.initialize({
+                    startOnLoad: true,
+                    theme: 'default',
+                    securityLevel: 'loose',
+                    flowchart: {
+                        useMaxWidth: false,
+                        htmlLabels: true
+                    },
+                    sequence: {
+                        useMaxWidth: false,
+                        htmlLabels: true,
+                        diagramMarginX: 50,
+                        diagramMarginY: 10,
+                        boxMargin: 10
+                    }
+                });
             });
-        });
-    </script>
-    
+        </script>
+        
         </head>
         <body>
             
@@ -78,30 +78,44 @@
         </div>
         
             <h1>Chapter 8: Logging</h1>
+
 <p>Welcome to the final chapter! In <a href="07_html_generation.md">Chapter 7: HTML Generation</a>, we saw how our <code>pf1</code> pipeline takes all the analyzed data and creates a beautiful, easy-to-read HTML report. Our program successfully went from a YouTube URL to a full summary!</p>
+
 <p>But wait... while the pipeline was running all those steps – fetching data, extracting transcripts, talking to AI, generating HTML – how did we know what was happening? What if something went wrong halfway through? How could we track the progress or diagnose a problem?</p>
+
 <p>That's where <strong>Logging</strong> comes in!</p>
+
 <h2>What is Logging? The Ship's Logbook</h2>
+
 <p>Imagine a ship on a long voyage. The captain and crew keep a detailed <strong>logbook</strong>. They record important events: when they left port, the weather conditions, any interesting sightings, course changes, and crucially, any problems encountered (like a leak or equipment failure). Later, anyone can read this logbook to understand what happened during the voyage.</p>
+
 <p><strong>Logging</strong> in a computer program is exactly like keeping this logbook. It's a way for the program to write down messages about what it's doing as it runs. These messages can include:
 *   Information about progress ("Starting transcript extraction...")
 *   Warnings about potential issues ("API key not found, using default...")
 *   Errors that occurred ("Failed to connect to YouTube API!")
 *   Detailed debugging information useful for developers.</p>
+
 <h2>Why Do We Need Logging?</h2>
+
 <p>Keeping this "program logbook" is super important for several reasons:</p>
+
 <ol>
-<li><strong>Monitoring Progress:</strong> When you run the <code>pf1</code> summarizer, especially on a long video, it might take a while. Logging messages printed to the screen (the "console") tell you what step the program is currently working on, so you know it hasn't crashed.<ul>
+<li><strong>Monitoring Progress:</strong> When you run the <code>pf1</code> summarizer, especially on a long video, it might take a while. Logging messages printed to the screen (the "console") tell you what step the program is currently working on, so you know it hasn't crashed.
+<ul>
 <li>Example: Seeing <code>[1/5] Starting Input Processing...</code>, <code>[2/5] Starting Content Extraction...</code> helps you track its progress.</li>
-</ul>
-</li>
+</ul></li>
 <li><strong>Diagnosing Problems (Debugging):</strong> If the program crashes or gives a weird result, the log messages are often the first place developers look. Error messages pinpoint where things went wrong, and earlier informational messages show the sequence of events leading up to the failure. It's like reading the ship's log to figure out why it went off course.</li>
 <li><strong>Understanding Behaviour:</strong> Sometimes, you just want to understand <em>how</em> the program made a decision or what data it was working with at a certain point. Detailed logs can provide this insight.</li>
 </ol>
+
 <p>Without logging, running a complex program would be like navigating a ship in thick fog with no instruments – you wouldn't know where you are, where you're going, or if you're about to hit something!</p>
+
 <h2>Logging Levels: Different Kinds of Messages</h2>
+
 <p>Not all events are equally important. A ship's log might note "Sighted dolphins" (interesting info) but would highlight "Taking on water!" (critical error) much more prominently.</p>
+
 <p>Logging systems use different <strong>levels</strong> to categorize messages:</p>
+
 <ul>
 <li><strong>INFO:</strong> General information about the program's progress. What's happening now? (e.g., <code>Starting HTML generation...</code>)</li>
 <li><strong>WARNING:</strong> Indicates something unexpected happened, but the program can probably continue. It's a heads-up. (e.g., <code>Transcript language not specified, defaulting to English.</code>)</li>
@@ -109,137 +123,159 @@
 <li><strong>CRITICAL:</strong> A very severe error, likely meaning the entire program has to stop. (e.g., <code>Cannot create output directory! Aborting.</code>)</li>
 <li><strong>DEBUG:</strong> Very detailed information, mostly useful only for developers trying to fix bugs. (e.g., <code>Variable 'x' has value: 42</code>)</li>
 </ul>
+
 <p>You can usually configure the logging system to only show messages above a certain level. For normal use, you might only want to see <code>INFO</code> and above. When debugging, you might enable <code>DEBUG</code> messages too.</p>
+
 <h2>Our Logging Setup in <code>pf1</code> (<code>src/utils/logger.py</code>)</h2>
+
 <p>In our <code>pf1</code> project, we use a popular and easy-to-use Python library called <strong>Loguru</strong> to handle logging. We have a dedicated setup file: <code>src/utils/logger.py</code>.</p>
+
 <p>This file does one main thing: it sets up our "logger" object, telling it <em>how</em> and <em>where</em> to record messages.</p>
+
 <p>Here’s a simplified look at the <code>setup_logger</code> function inside that file:</p>
-<pre><code class="language-python"># Simplified from src/utils/logger.py
-import sys
-import os
-from datetime import datetime
-from loguru import logger # Import the library
 
-def setup_logger(log_dir=&quot;logs&quot;):
-    # Create a directory to store log files if it doesn't exist
-    os.makedirs(log_dir, exist_ok=True)
-    timestamp = datetime.now().strftime(&quot;%Y%m%d_%H%M%S&quot;)
-    log_file = os.path.join(log_dir, f&quot;youtube_summarizer_{timestamp}.log&quot;)
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Simplified from src/utils/logger.py</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span> <span class="c1"># Import the library</span>
 
-    # --- Configuration Starts Here ---
-    logger.remove() # Clear any default settings
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_logger</span><span class="p">(</span><span class="n">log_dir</span><span class="o">=</span><span class="s2">&quot;logs&quot;</span><span class="p">):</span>
+    <span class="c1"># Create a directory to store log files if it doesn&#39;t exist</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">log_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">_%H%M%S&quot;</span><span class="p">)</span>
+    <span class="n">log_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">log_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;youtube_summarizer_</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">.log&quot;</span><span class="p">)</span>
 
-    # 1. Log to the Console (what you see on screen)
-    logger.add(
-        sys.stdout, # 'stdout' means the standard console output
-        level=&quot;INFO&quot;, # Show INFO messages and above (WARNING, ERROR)
-        colorize=True, # Make the output colorful!
-        format=&quot;&lt;level&gt;{level: &lt;8}&lt;/level&gt; | &lt;level&gt;{message}&lt;/level&gt;&quot; # Simple format
-    )
+    <span class="c1"># --- Configuration Starts Here ---</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span> <span class="c1"># Clear any default settings</span>
 
-    # 2. Log to a File (for detailed history)
-    logger.add(
-        log_file, # The path to the log file (e.g., logs/youtube_summarizer_20231027_103000.log)
-        level=&quot;DEBUG&quot;, # Record EVERYTHING (including detailed DEBUG messages) in the file
-        format=&quot;{time} | {level} | {name}:{function} - {message}&quot; # More detailed format
-    )
-    # --- Configuration Ends Here ---
+    <span class="c1"># 1. Log to the Console (what you see on screen)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="c1"># &#39;stdout&#39; means the standard console output</span>
+        <span class="n">level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="c1"># Show INFO messages and above (WARNING, ERROR)</span>
+        <span class="n">colorize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="c1"># Make the output colorful!</span>
+        <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;&lt;level&gt;</span><span class="si">{level: &lt;8}</span><span class="s2">&lt;/level&gt; | &lt;level&gt;</span><span class="si">{message}</span><span class="s2">&lt;/level&gt;&quot;</span> <span class="c1"># Simple format</span>
+    <span class="p">)</span>
 
-    logger.info(&quot;Logging initialized.&quot;)
-    return logger
+    <span class="c1"># 2. Log to a File (for detailed history)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+        <span class="n">log_file</span><span class="p">,</span> <span class="c1"># The path to the log file (e.g., logs/youtube_summarizer_20231027_103000.log)</span>
+        <span class="n">level</span><span class="o">=</span><span class="s2">&quot;DEBUG&quot;</span><span class="p">,</span> <span class="c1"># Record EVERYTHING (including detailed DEBUG messages) in the file</span>
+        <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{time}</span><span class="s2"> | </span><span class="si">{level}</span><span class="s2"> | </span><span class="si">{name}</span><span class="s2">:</span><span class="si">{function}</span><span class="s2"> - </span><span class="si">{message}</span><span class="s2">&quot;</span> <span class="c1"># More detailed format</span>
+    <span class="p">)</span>
+    <span class="c1"># --- Configuration Ends Here ---</span>
 
-# Create the logger instance that the rest of the project will use
-logger = setup_logger()
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Logging initialized.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">logger</span>
+
+<span class="c1"># Create the logger instance that the rest of the project will use</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">()</span>
 </code></pre>
+</div>
+
 <p><strong>Explanation:</strong></p>
+
 <ol>
 <li><strong>Import Loguru:</strong> We bring in the <code>loguru</code> library.</li>
 <li><strong>Create Log File Path:</strong> It decides where to save the log file, putting it in a <code>logs</code> folder and adding a timestamp to the filename so each run gets its own file.</li>
-<li><strong>Console Logging (<code>logger.add(sys.stdout, ...)</code>):</strong><ul>
+<li><strong>Console Logging (<code>logger.add(sys.stdout, ...)</code>):</strong>
+<ul>
 <li>This tells Loguru to send messages to your terminal screen (<code>sys.stdout</code>).</li>
 <li><code>level="INFO"</code> means you'll see <code>INFO</code>, <code>WARNING</code>, <code>ERROR</code>, and <code>CRITICAL</code> messages on the screen, but not <code>DEBUG</code> messages (they are usually too noisy for regular users).</li>
 <li><code>colorize=True</code> makes the output easier to read with colors (e.g., errors might be red).</li>
 <li><code>format="..."</code> defines how each log message looks on the screen (here, just the level and the message).</li>
-</ul>
-</li>
-<li><strong>File Logging (<code>logger.add(log_file, ...)</code>):</strong><ul>
+</ul></li>
+<li><strong>File Logging (<code>logger.add(log_file, ...)</code>):</strong>
+<ul>
 <li>This tells Loguru to also write messages to the <code>log_file</code> it prepared earlier.</li>
 <li><code>level="DEBUG"</code> means <em>all</em> messages, including the detailed <code>DEBUG</code> ones, will be saved in the file. This is super helpful for developers later!</li>
 <li><code>format="..."</code> uses a slightly different format for the file, including the timestamp, level, and where the message came from (file name, function name).</li>
-</ul>
-</li>
+</ul></li>
 <li><strong>Return Logger:</strong> The function returns the configured <code>logger</code> object. The last line, <code>logger = setup_logger()</code>, makes this configured logger available for the rest of the project to import and use.</li>
 </ol>
+
 <p>So, when our program logs something, it usually appears in two places: nicely formatted on your screen, and stored with full details in a log file!</p>
+
 <h2>How to Use the Logger in <code>pf1</code></h2>
+
 <p>Using the logger in any part of our project (like inside a <a href="02_node__pipeline_step_.md">Node (Pipeline Step)</a> or a utility function) is very simple:</p>
+
 <ol>
-<li>
-<p><strong>Import it:</strong> Add this line at the top of your Python file:
-    <code>python
-    from src.utils.logger import logger</code></p>
-</li>
-<li>
-<p><strong>Call its methods:</strong> Whenever you want to record something, call the appropriate method on the <code>logger</code> object:</p>
+<li><p><strong>Import it:</strong> Add this line at the top of your Python file:</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">src.utils.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+</code></pre>
+</div></li>
+<li><p><strong>Call its methods:</strong> Whenever you want to record something, call the appropriate method on the <code>logger</code> object:</p>
+
 <ul>
 <li><code>logger.info("This is just information.")</code></li>
 <li><code>logger.warning("This might be a problem.")</code></li>
 <li><code>logger.error("Something definitely went wrong here.")</code></li>
 <li><code>logger.debug("Details for the developers.")</code></li>
-</ul>
-</li>
+</ul></li>
 </ol>
+
 <p><strong>Example inside a hypothetical Node:</strong></p>
-<pre><code class="language-python"># hypothetical_node.py
-from src.utils.logger import logger # 1. Import the logger
 
-class HypotheticalNode:
-    def __init__(self, shared_memory):
-        self.shared_memory = shared_memory
-        logger.info(&quot;HypotheticalNode created.&quot;) # Log during creation
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># hypothetical_node.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.utils.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span> <span class="c1"># 1. Import the logger</span>
 
-    def prep(self):
-        logger.debug(&quot;Prep phase starting.&quot;) # Detailed debug message
-        if &quot;input_data&quot; not in self.shared_memory:
-            logger.error(&quot;Input data is missing!&quot;) # Log an error
-            self.shared_memory[&quot;error&quot;] = &quot;Missing input_data&quot;
-            return # Stop prep
-        self.data = self.shared_memory[&quot;input_data&quot;]
-        logger.info(&quot;Preparation complete. Data found.&quot;) # Log success info
+<span class="k">class</span><span class="w"> </span><span class="nc">HypotheticalNode</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shared_memory</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shared_memory</span> <span class="o">=</span> <span class="n">shared_memory</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;HypotheticalNode created.&quot;</span><span class="p">)</span> <span class="c1"># Log during creation</span>
 
-    def exec(self):
-        if &quot;error&quot; in self.shared_memory: return # Don't run if prep failed
-        logger.info(&quot;Executing main task...&quot;) # Log start of execution
-        # ... do the actual work ...
-        result = f&quot;Processed {self.data}&quot;
-        self.result = result
-        logger.debug(f&quot;Intermediate result: {result}&quot;) # Log internal details
+    <span class="k">def</span><span class="w"> </span><span class="nf">prep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Prep phase starting.&quot;</span><span class="p">)</span> <span class="c1"># Detailed debug message</span>
+        <span class="k">if</span> <span class="s2">&quot;input_data&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_memory</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Input data is missing!&quot;</span><span class="p">)</span> <span class="c1"># Log an error</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shared_memory</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Missing input_data&quot;</span>
+            <span class="k">return</span> <span class="c1"># Stop prep</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_memory</span><span class="p">[</span><span class="s2">&quot;input_data&quot;</span><span class="p">]</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Preparation complete. Data found.&quot;</span><span class="p">)</span> <span class="c1"># Log success info</span>
 
-    def post(self):
-        if &quot;error&quot; in self.shared_memory: return # Don't run if errors
-        logger.info(&quot;Post-processing results...&quot;) # Log start of post
-        self.shared_memory[&quot;output&quot;] = self.result
-        logger.info(&quot;Results added to shared memory.&quot;) # Log completion
+    <span class="k">def</span><span class="w"> </span><span class="nf">exec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;error&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_memory</span><span class="p">:</span> <span class="k">return</span> <span class="c1"># Don&#39;t run if prep failed</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Executing main task...&quot;</span><span class="p">)</span> <span class="c1"># Log start of execution</span>
+        <span class="c1"># ... do the actual work ...</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Processed </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Intermediate result: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># Log internal details</span>
 
-    def run(self):
-        self.prep()
-        self.exec()
-        self.post()
-        logger.info(&quot;HypotheticalNode finished.&quot;) # Log node completion
-        return self.shared_memory
+    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;error&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_memory</span><span class="p">:</span> <span class="k">return</span> <span class="c1"># Don&#39;t run if errors</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Post-processing results...&quot;</span><span class="p">)</span> <span class="c1"># Log start of post</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shared_memory</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Results added to shared memory.&quot;</span><span class="p">)</span> <span class="c1"># Log completion</span>
 
-# --- Example Usage (not part of the Node class) ---
-# node = HypotheticalNode({&quot;input_data&quot;: &quot;some value&quot;})
-# node.run()
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prep</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;HypotheticalNode finished.&quot;</span><span class="p">)</span> <span class="c1"># Log node completion</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_memory</span>
+
+<span class="c1"># --- Example Usage (not part of the Node class) ---</span>
+<span class="c1"># node = HypotheticalNode({&quot;input_data&quot;: &quot;some value&quot;})</span>
+<span class="c1"># node.run()</span>
 </code></pre>
+</div>
+
 <p>When this code runs:
 *   You'd see <code>INFO</code> and <code>ERROR</code> messages on your console (because we set console level to <code>INFO</code>).
 *   The log file (<code>logs/youtube_summarizer_....log</code>) would contain <em>all</em> the messages, including the <code>DEBUG</code> ones, along with timestamps and function names.</p>
+
 <h2>Under the Hood: How Loguru Knows Where You Are</h2>
+
 <p>You might wonder how the log message in the file includes details like the function name (<code>prep</code>, <code>exec</code>) where the log was called. Loguru is clever! When you call <code>logger.info("...")</code>, Loguru automatically inspects the program's current state to find out which file, function, and line number made the call. It then includes this information in the log record, which the file handler uses in its format string.</p>
+
 <p>Here's a simplified view of what happens:</p>
-<div class="mermaid">
-sequenceDiagram
+
+<pre><code>sequenceDiagram
     participant Node as HypotheticalNode
     participant Logger as logger (Loguru)
     participant ConsoleH as Console Handler
@@ -247,19 +283,22 @@ sequenceDiagram
     participant Console as Your Terminal
     participant LogFile as logs/summarizer.log
 
-    Node->>Logger: logger.info("Executing main task...")
-    Logger->>Logger: Create log record (message, level=INFO, function=exec, ...)
-    Logger->>ConsoleH: Process record
-    ConsoleH->>ConsoleH: Format message (INFO | Executing...)
-    ConsoleH->>Console: Print formatted message
-    Logger->>FileH: Process record
-    FileH->>FileH: Format message (Time | INFO | hypothetical_node:exec - Executing...)
-    FileH->>LogFile: Append formatted message
+    Node-&gt;&gt;Logger: logger.info("Executing main task...")
+    Logger-&gt;&gt;Logger: Create log record (message, level=INFO, function=exec, ...)
+    Logger-&gt;&gt;ConsoleH: Process record
+    ConsoleH-&gt;&gt;ConsoleH: Format message (INFO | Executing...)
+    ConsoleH-&gt;&gt;Console: Print formatted message
+    Logger-&gt;&gt;FileH: Process record
+    FileH-&gt;&gt;FileH: Format message (Time | INFO | hypothetical_node:exec - Executing...)
+    FileH-&gt;&gt;LogFile: Append formatted message
+</code></pre>
 
-</div>
 <p>This shows the Node calling the logger. The logger creates a detailed record and passes it to both configured handlers (Console and File). Each handler formats the record according to its settings and sends it to the final destination (screen or file).</p>
+
 <h2>Conclusion</h2>
+
 <p>And that's logging! It's the essential practice of recording events during your program's execution. We learned:</p>
+
 <ul>
 <li><strong>What it is:</strong> Like a ship's logbook for your code.</li>
 <li><strong>Why it's crucial:</strong> For monitoring progress, diagnosing errors (debugging), and understanding behaviour.</li>
@@ -268,9 +307,13 @@ sequenceDiagram
 <li><strong>Dual Output:</strong> Logs go to the console (INFO+) with colors and to a timestamped file (DEBUG+) with full details.</li>
 <li><strong>Usage:</strong> Simply <code>from src.utils.logger import logger</code> and call methods like <code>logger.info()</code>, <code>logger.error()</code>, etc.</li>
 </ul>
+
 <p>Effective logging turns a mysterious black box program into something transparent and understandable, making development and troubleshooting much easier.</p>
+
 <hr />
+
 <p><strong>This concludes our tutorial series for the <code>pf1</code> YouTube Summarizer project!</strong></p>
+
 <p>We've journeyed through the core concepts:
 1.  <a href="01_pipeline_orchestration.md">Pipeline Orchestration</a>: The overall manager coordinating the steps.
 2.  <a href="02_node__pipeline_step_.md">Node (Pipeline Step)</a>: The specialized workers performing individual tasks.
@@ -280,9 +323,13 @@ sequenceDiagram
 6.  <a href="06_llm_utility.md">LLM Utility</a>: Our interface for talking to the AI.
 7.  <a href="07_html_generation.md">HTML Generation</a>: Creating the final user-friendly report.
 8.  <a href="08_logging.md">Logging</a>: Recording the program's journey.</p>
+
 <p>We hope this gives you a solid foundation for understanding how <code>pf1</code> works and empowers you to explore, modify, and contribute to the project. Happy coding!</p>
+
 <hr />
+
 <p>Generated by <a href="https://github.com/The-Pocket/Tutorial-Codebase-Knowledge">AI Codebase Knowledge Builder</a></p>
+
             
         <div class="navigation">
             <a class="nav-link" href="07_html_generation.html">&larr; Previous</a>

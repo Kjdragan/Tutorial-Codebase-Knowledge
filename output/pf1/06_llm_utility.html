@@ -5,69 +5,69 @@
             <meta charset="utf-8">
             <title>06 Llm Utility</title>
             
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        pre {
-            background-color: #f5f5f5;
-            padding: 15px;
-            border-radius: 5px;
-            overflow-x: auto;
-        }
-        code {
-            background-color: #f5f5f5;
-            padding: 2px 5px;
-            border-radius: 3px;
-        }
-        .navigation {
-            display: flex;
-            justify-content: space-between;
-            margin: 20px 0;
-            padding: 10px;
-            background-color: #f5f5f5;
-            border-radius: 5px;
-        }
-        .nav-link {
-            text-decoration: none;
-            color: #0366d6;
-        }
-        .nav-link:hover {
-            text-decoration: underline;
-        }
-        .mermaid {
-            text-align: center;
-            margin: 20px 0;
-        }
-    </style>
-    
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                max-width: 900px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            pre {
+                background-color: #f5f5f5;
+                padding: 15px;
+                border-radius: 5px;
+                overflow-x: auto;
+            }
+            code {
+                background-color: #f5f5f5;
+                padding: 2px 5px;
+                border-radius: 3px;
+            }
+            .navigation {
+                display: flex;
+                justify-content: space-between;
+                margin: 20px 0;
+                padding: 10px;
+                background-color: #f5f5f5;
+                border-radius: 5px;
+            }
+            .nav-link {
+                text-decoration: none;
+                color: #0366d6;
+            }
+            .nav-link:hover {
+                text-decoration: underline;
+            }
+            .mermaid {
+                text-align: center;
+                margin: 20px 0;
+            }
+        </style>
+        
             
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            mermaid.initialize({
-                startOnLoad: true,
-                theme: 'default',
-                securityLevel: 'loose',
-                flowchart: {
-                    useMaxWidth: false,
-                    htmlLabels: true
-                },
-                sequence: {
-                    useMaxWidth: false,
-                    htmlLabels: true,
-                    diagramMarginX: 50,
-                    diagramMarginY: 10,
-                    boxMargin: 10
-                }
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                mermaid.initialize({
+                    startOnLoad: true,
+                    theme: 'default',
+                    securityLevel: 'loose',
+                    flowchart: {
+                        useMaxWidth: false,
+                        htmlLabels: true
+                    },
+                    sequence: {
+                        useMaxWidth: false,
+                        htmlLabels: true,
+                        diagramMarginX: 50,
+                        diagramMarginY: 10,
+                        boxMargin: 10
+                    }
+                });
             });
-        });
-    </script>
-    
+        </script>
+        
         </head>
         <body>
             
@@ -78,33 +78,51 @@
         </div>
         
             <h1>Chapter 6: LLM Utility</h1>
+
 <p>Welcome back! In <a href="05_youtube_data_utilities.md">Chapter 5: YouTube Data Utilities</a>, we saw how our project uses specialized tools to fetch raw data from YouTube, like the video's title and the full transcript (the spoken words). We have the text, but how do we make <em>sense</em> of it? How do we automatically figure out the main topics discussed, generate questions and answers about them, or create super-simple explanations?</p>
+
 <p>That sounds like a job for a super-smart assistant!</p>
+
 <h2>The Problem: Understanding and Generating Content</h2>
+
 <p>Imagine you have the complete script of a movie. Just reading the script doesn't automatically tell you the main plot points, the underlying themes, or answers to specific questions about the story. You need to <em>analyze</em> it.</p>
+
 <p>Similarly, our Nodes, like the <code>TopicExtractionNode</code> or the <code>TopicProcessorNode</code>, need to analyze the video transcript. They need to:
 *   Identify the core subjects being discussed.
 *   Maybe create questions a viewer might have about those subjects.
 *   Perhaps summarize a complex idea in simple terms.</p>
+
 <p>Doing this analysis accurately and creatively requires advanced understanding of language and context – something traditional programming struggles with. We need help from a powerful Artificial Intelligence (AI).</p>
+
 <h2>Our Solution: A Direct Line to an AI Expert (LLM Utility)</h2>
+
 <p>Modern AI includes something called <strong>Large Language Models (LLMs)</strong>. Think of models like GPT-4 (from OpenAI) as incredibly knowledgeable experts you can chat with. They have read vast amounts of text and can understand language, generate creative text, answer questions, summarize information, and much more.</p>
+
 <p>But how do our different Nodes talk to this AI expert? We don't want each Node to figure out the complex details of connecting to the AI service, handling authentication, formatting requests, and parsing responses every time. That would be repetitive and complicated!</p>
+
 <p>So, we created the <strong>LLM Utility</strong>. It's like having a <strong>dedicated, standardized phone line</strong> straight to our AI expert (the LLM).</p>
+
 <ul>
 <li><strong>Standardized:</strong> Every Node uses the <em>same</em> simple function (<code>call_llm</code>) to talk to the AI.</li>
 <li><strong>Simplified:</strong> The utility hides all the complex connection details. Nodes just need to know <em>what</em> question to ask.</li>
 <li><strong>Centralized:</strong> All AI communication goes through this one utility, making it easier to manage and update.</li>
 </ul>
+
 <p>Any Node in our pipeline that needs help from the AI – whether it's the <code>TopicExtractionNode</code> asking "What are the main topics here?" or the <code>TopicProcessorNode</code> asking "Explain this topic like I'm 5" – uses this same utility function.</p>
+
 <h2>Asking the Right Question: The Prompt</h2>
+
 <p>When you call an expert, you don't just say "Hello?". You need to give them context and clearly state what you need. When we talk to an LLM, this is called a <strong>Prompt</strong>.</p>
+
 <p>A prompt typically includes:
 1.  <strong>Instructions:</strong> What task should the AI perform? (e.g., "Identify the main topics", "Generate questions and answers", "Explain this simply")
 2.  <strong>Context:</strong> What information does the AI need to do the task? (e.g., the video transcript segment, the specific topic name)
 3.  <strong>Format Constraints (Optional):</strong> How should the AI format its answer? (e.g., "Respond with ONLY a JSON list", "Keep it under 100 words")</p>
+
 <p>Here's a simple example of a prompt the <code>TopicExtractionNode</code> might create:</p>
-<pre><code class="language-text">You are an expert at analyzing video content.
+
+<div class="codehilite">
+<pre><span></span><code>You are an expert at analyzing video content.
 I have a segment of a video transcript. Please identify the 3 main topics discussed.
 List them as short phrases.
 
@@ -113,57 +131,65 @@ Transcript Segment:
 
 Respond with ONLY a JSON array of topic strings, like [&quot;Topic A&quot;, &quot;Topic B&quot;, &quot;Topic C&quot;].
 </code></pre>
+</div>
+
 <p>This prompt tells the AI its role, the task, provides the necessary text, and specifies the output format.</p>
+
 <h2>How Nodes Use the LLM Utility: <code>call_llm</code></h2>
+
 <p>Our Nodes use a single, simple function from our toolbox (<code>src/utils/</code>) called <code>call_llm</code>. This function takes the carefully crafted prompt and handles sending it to the AI and getting the response back.</p>
+
 <p>Let's look at a simplified example from the <code>TopicExtractionNode</code> (which we saw in the context provided earlier). Inside its <code>_process_chunk</code> method, it needs to find topics within a piece of the transcript (<code>chunk</code>):</p>
-<pre><code class="language-python"># Simplified from src/nodes/topic_extraction_node.py
 
-# Import the utility function
-from src.utils.call_llm import call_llm
-# ... other imports like textwrap ...
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Simplified from src/nodes/topic_extraction_node.py</span>
 
-class TopicExtractionNode(BaseNode):
-    # ... other methods like __init__, prep ...
+<span class="c1"># Import the utility function</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.utils.call_llm</span><span class="w"> </span><span class="kn">import</span> <span class="n">call_llm</span>
+<span class="c1"># ... other imports like textwrap ...</span>
 
-    def _process_chunk(self, chunk_index: int, chunk: str):
-        logger.info(f&quot;Processing chunk {chunk_index+1}...&quot;)
+<span class="k">class</span><span class="w"> </span><span class="nc">TopicExtractionNode</span><span class="p">(</span><span class="n">BaseNode</span><span class="p">):</span>
+    <span class="c1"># ... other methods like __init__, prep ...</span>
 
-        # 1. Create the prompt (instructions + context)
-        prompt = textwrap.dedent(f&quot;&quot;&quot;
-        You are an expert at analyzing video content.
-        Identify the main topics in this transcript segment.
-        Provide at most {self.max_topics} topics as short phrases.
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chunk_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">chunk</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing chunk </span><span class="si">{</span><span class="n">chunk_index</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
 
-        Transcript segment:
-        {chunk[:2000]}...
+        <span class="c1"># 1. Create the prompt (instructions + context)</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        You are an expert at analyzing video content.</span>
+<span class="s2">        Identify the main topics in this transcript segment.</span>
+<span class="s2">        Provide at most </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_topics</span><span class="si">}</span><span class="s2"> topics as short phrases.</span>
 
-        Respond with ONLY a JSON array of topic strings.
-        &quot;&quot;&quot;)
+<span class="s2">        Transcript segment:</span>
+<span class="s2">        </span><span class="si">{</span><span class="n">chunk</span><span class="p">[:</span><span class="mi">2000</span><span class="p">]</span><span class="si">}</span><span class="s2">...</span>
 
-        # 2. Call the LLM Utility!
-        try:
-            logger.info(f&quot;Calling LLM for chunk {chunk_index+1}...&quot;)
-            # Just one simple function call to talk to the AI!
-            response_text = call_llm(
-                prompt=prompt,
-                temperature=0.3, # Lower temperature = more focused/deterministic output
-                max_tokens=200,  # Limit the length of the response
-                timeout=30       # Wait max 30 seconds for a response
-            )
-            logger.info(f&quot;Received LLM response for chunk {chunk_index+1}&quot;)
+<span class="s2">        Respond with ONLY a JSON array of topic strings.</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">)</span>
 
-            # 3. Process the response (e.g., parse the JSON)
-            # ... (code to handle the response_text) ...
-            # extracted_topics = parse_json(response_text)
-            # return extracted_topics
+        <span class="c1"># 2. Call the LLM Utility!</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Calling LLM for chunk </span><span class="si">{</span><span class="n">chunk_index</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+            <span class="c1"># Just one simple function call to talk to the AI!</span>
+            <span class="n">response_text</span> <span class="o">=</span> <span class="n">call_llm</span><span class="p">(</span>
+                <span class="n">prompt</span><span class="o">=</span><span class="n">prompt</span><span class="p">,</span>
+                <span class="n">temperature</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="c1"># Lower temperature = more focused/deterministic output</span>
+                <span class="n">max_tokens</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>  <span class="c1"># Limit the length of the response</span>
+                <span class="n">timeout</span><span class="o">=</span><span class="mi">30</span>       <span class="c1"># Wait max 30 seconds for a response</span>
+            <span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Received LLM response for chunk </span><span class="si">{</span><span class="n">chunk_index</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        except Exception as e:
-            logger.error(f&quot;Error calling LLM for chunk {chunk_index+1}: {str(e)}&quot;)
-            # ... (handle error) ...
-            return []
+            <span class="c1"># 3. Process the response (e.g., parse the JSON)</span>
+            <span class="c1"># ... (code to handle the response_text) ...</span>
+            <span class="c1"># extracted_topics = parse_json(response_text)</span>
+            <span class="c1"># return extracted_topics</span>
 
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error calling LLM for chunk </span><span class="si">{</span><span class="n">chunk_index</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="c1"># ... (handle error) ...</span>
+            <span class="k">return</span> <span class="p">[]</span>
 </code></pre>
+</div>
+
 <p>In this example:
 1.  The Node constructs the <code>prompt</code> string with instructions and the relevant <code>chunk</code> of the transcript.
 2.  It makes a single call to <code>call_llm</code>, passing the <code>prompt</code>. It can also pass optional parameters like:
@@ -172,9 +198,13 @@ class TopicExtractionNode(BaseNode):
     *   <code>timeout</code>: Sets a maximum time to wait for the AI to respond.
 3.  The <code>call_llm</code> function handles all the communication complexity. It returns the AI's response as a simple text string (<code>response_text</code>).
 4.  The Node then processes this <code>response_text</code> (e.g., parsing it if it expects JSON).</p>
+
 <p>That's it! The Node doesn't need to worry about API keys, network requests, or complex error handling for the AI communication itself – the <code>call_llm</code> utility takes care of it.</p>
+
 <h2>Under the Hood: Dialing the Expert</h2>
+
 <p>What actually happens when a Node calls <code>call_llm</code>? Let's trace the call.</p>
+
 <ol>
 <li><strong>Get Credentials:</strong> The <code>call_llm</code> function first needs the secret "phone number" and "password" to connect to the AI service (like OpenAI). This is usually an <strong>API Key</strong>, which it securely reads from the system's environment settings (so we don't store secrets directly in the code).</li>
 <li><strong>Prepare the Call:</strong> It packages the <code>prompt</code> and any other parameters (like <code>temperature</code>) into the specific format the AI service expects.</li>
@@ -183,109 +213,137 @@ class TopicExtractionNode(BaseNode):
 <li><strong>Receive Answer:</strong> It gets the response text back from the AI service.</li>
 <li><strong>Return or Report Error:</strong> If successful, it returns the response text to the Node. If anything went wrong (bad API key, network error, timeout, rate limit), it logs the error and returns a helpful error message string.</li>
 </ol>
+
 <p>Here’s a simplified diagram of this flow:</p>
-<div class="mermaid">
-sequenceDiagram
+
+<pre><code>sequenceDiagram
     participant Node as Pipeline Node (e.g., TopicExtraction)
     participant LLMUtil as call_llm() Utility
     participant OpenAI_Lib as OpenAI Python Library
     participant OpenAI_API as OpenAI API Service
 
-    Node->>LLMUtil: call_llm(prompt="...", ...)
-    LLMUtil->>LLMUtil: Get API Key (from environment)
+    Node-&gt;&gt;LLMUtil: call_llm(prompt="...", ...)
+    LLMUtil-&gt;&gt;LLMUtil: Get API Key (from environment)
     Note right of LLMUtil: Prepare request data
-    LLMUtil->>OpenAI_Lib: client.chat.completions.create(...)
-    OpenAI_Lib->>OpenAI_API: Send HTTPS Request (prompt, key, etc.)
+    LLMUtil-&gt;&gt;OpenAI_Lib: client.chat.completions.create(...)
+    OpenAI_Lib-&gt;&gt;OpenAI_API: Send HTTPS Request (prompt, key, etc.)
     Note over OpenAI_API: Processes request...
-    OpenAI_API-->>OpenAI_Lib: Return HTTPS Response (text, usage, etc.)
-    OpenAI_Lib-->>LLMUtil: Return response object
-    LLMUtil->>LLMUtil: Extract response text
-    LLMUtil-->>Node: Return response string (or error message)
+    OpenAI_API--&gt;&gt;OpenAI_Lib: Return HTTPS Response (text, usage, etc.)
+    OpenAI_Lib--&gt;&gt;LLMUtil: Return response object
+    LLMUtil-&gt;&gt;LLMUtil: Extract response text
+    LLMUtil--&gt;&gt;Node: Return response string (or error message)
+</code></pre>
 
-</div>
 <h2>Diving into the Code (<code>src/utils/call_llm.py</code>)</h2>
+
 <p>Let's peek inside the <code>call_llm</code> function in <code>src/utils/call_llm.py</code>. Remember, we'll keep it simple!</p>
+
 <p><strong>1. Getting the API Key</strong></p>
+
 <p>The function first needs to find the secret API key. It looks for an "environment variable" named <code>OPENAI_API_KEY</code>. You need to set this variable up in your system separately.</p>
-<pre><code class="language-python"># Simplified from src/utils/call_llm.py
-import os
-import logging
 
-def call_llm(prompt, ...):
-    # Get API key from environment variable
-    api_key = os.environ.get(&quot;OPENAI_API_KEY&quot;)
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Simplified from src/utils/call_llm.py</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 
-    if not api_key:
-        logging.error(&quot;OpenAI API key not found!&quot;)
-        return &quot;Error: OpenAI API key not found.&quot;
+<span class="k">def</span><span class="w"> </span><span class="nf">call_llm</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
+    <span class="c1"># Get API key from environment variable</span>
+    <span class="n">api_key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;OPENAI_API_KEY&quot;</span><span class="p">)</span>
 
-    # ... (rest of the function)
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">api_key</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;OpenAI API key not found!&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;Error: OpenAI API key not found.&quot;</span>
+
+    <span class="c1"># ... (rest of the function)</span>
 </code></pre>
+</div>
+
 <p>This code uses Python's <code>os</code> module to read the environment variable. If it's not found, it immediately returns an error message.</p>
+
 <p><strong>2. Setting up the Connection (Client)</strong></p>
+
 <p>Next, it uses the official <code>openai</code> library to create a "client" object, which knows how to talk to the OpenAI API.</p>
-<pre><code class="language-python"># Simplified from src/utils/call_llm.py
-from openai import OpenAI # The official library
-# ... other imports ...
 
-def call_llm(prompt, model=&quot;gpt-4o&quot;, temperature=0.7, max_tokens=1000, timeout=60):
-    # ... (get api_key) ...
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Simplified from src/utils/call_llm.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">openai</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAI</span> <span class="c1"># The official library</span>
+<span class="c1"># ... other imports ...</span>
 
-    try:
-        # Initialize the client with the API key
-        client = OpenAI(api_key=api_key)
+<span class="k">def</span><span class="w"> </span><span class="nf">call_llm</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-4o&quot;</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">max_tokens</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">):</span>
+    <span class="c1"># ... (get api_key) ...</span>
 
-        # ... (make the API call using 'client') ...
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Initialize the client with the API key</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">OpenAI</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
 
-    except Exception as e:
-        logging.exception(&quot;Error initializing OpenAI client&quot;)
-        return f&quot;Error initializing client: {str(e)}&quot;
+        <span class="c1"># ... (make the API call using &#39;client&#39;) ...</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;Error initializing OpenAI client&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Error initializing client: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 </code></pre>
+</div>
+
 <p>This sets up the communication channel using the API key.</p>
+
 <p><strong>3. Making the Call</strong></p>
+
 <p>Now, it uses the <code>client</code> object to actually send the prompt to the specified AI model.</p>
-<pre><code class="language-python"># Simplified from src/utils/call_llm.py
-# ... inside the 'try' block ...
 
-        try:
-            logging.debug(f&quot;Calling OpenAI model {model}...&quot;)
-            # This is the actual call to the AI service
-            response = client.chat.completions.create(
-                model=model,
-                messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: prompt}], # Pass the prompt
-                temperature=temperature,     # Pass other parameters
-                max_tokens=max_tokens,
-                timeout=timeout
-            )
-            logging.debug(&quot;OpenAI call successful.&quot;)
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Simplified from src/utils/call_llm.py</span>
+<span class="c1"># ... inside the &#39;try&#39; block ...</span>
 
-            # ... (extract the text response) ...
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Calling OpenAI model </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+            <span class="c1"># This is the actual call to the AI service</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+                <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+                <span class="n">messages</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">}],</span> <span class="c1"># Pass the prompt</span>
+                <span class="n">temperature</span><span class="o">=</span><span class="n">temperature</span><span class="p">,</span>     <span class="c1"># Pass other parameters</span>
+                <span class="n">max_tokens</span><span class="o">=</span><span class="n">max_tokens</span><span class="p">,</span>
+                <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span>
+            <span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;OpenAI call successful.&quot;</span><span class="p">)</span>
 
-        except Exception as api_error:
-            logging.error(f&quot;OpenAI API error: {str(api_error)}&quot;)
-            # Handle specific errors like timeouts or rate limits
-            if &quot;timeout&quot; in str(api_error).lower():
-                 return &quot;Error: LLM API call timed out.&quot;
-            # ... other error handling ...
-            return f&quot;Error calling LLM API: {str(api_error)}&quot;
+            <span class="c1"># ... (extract the text response) ...</span>
 
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">api_error</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;OpenAI API error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">api_error</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="c1"># Handle specific errors like timeouts or rate limits</span>
+            <span class="k">if</span> <span class="s2">&quot;timeout&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">api_error</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                 <span class="k">return</span> <span class="s2">&quot;Error: LLM API call timed out.&quot;</span>
+            <span class="c1"># ... other error handling ...</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Error calling LLM API: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">api_error</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 </code></pre>
+</div>
+
 <p>The <code>client.chat.completions.create</code> method does the heavy lifting of communicating with OpenAI. We wrap this in another <code>try...except</code> block to catch specific API errors like timeouts.</p>
+
 <p><strong>4. Getting the Answer</strong></p>
+
 <p>If the call is successful, the <code>response</code> object contains the AI's answer. We need to extract the actual text content.</p>
-<pre><code class="language-python"># Simplified from src/utils/call_llm.py
-# ... inside the successful API call 'try' block ...
 
-            # Extract the text from the response object
-            content = response.choices[0].message.content
-            logging.debug(f&quot;Received response length: {len(content)}&quot;)
-            return content # Return the text to the Node
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Simplified from src/utils/call_llm.py</span>
+<span class="c1"># ... inside the successful API call &#39;try&#39; block ...</span>
 
+            <span class="c1"># Extract the text from the response object</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">content</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Received response length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">content</span> <span class="c1"># Return the text to the Node</span>
 </code></pre>
+</div>
+
 <p>The useful text is nested inside the <code>response</code> object. We extract it and return it as a simple string.</p>
+
 <p>This utility simplifies AI interaction for all Nodes, providing a consistent and robust way to leverage the power of LLMs.</p>
+
 <h2>Conclusion</h2>
+
 <p>In this chapter, we learned about the <strong>LLM Utility</strong>, our project's standardized way of communicating with Large Language Models like GPT-4.</p>
+
 <ul>
 <li><strong>Problem:</strong> Nodes need to perform complex language tasks (topic extraction, Q&amp;A, summarization) that require AI.</li>
 <li><strong>Solution:</strong> A central utility function (<code>call_llm</code>) provides a simple, consistent interface to the AI.</li>
@@ -294,11 +352,17 @@ def call_llm(prompt, model=&quot;gpt-4o&quot;, temperature=0.7, max_tokens=1000,
 <li><strong>Usage:</strong> Nodes call <code>call_llm(prompt, ...)</code> and receive the AI's response as text.</li>
 <li><strong>Under the Hood:</strong> The utility handles API keys, network requests, timeouts, and basic error handling using the official OpenAI library.</li>
 </ul>
+
 <p>This utility is a key component, enabling sophisticated analysis and content generation within our pipeline. Without it, tasks like topic extraction or creating ELI5 summaries would be much harder!</p>
+
 <p>Now that we've gathered video info (<a href="05_youtube_data_utilities.md">Chapter 5</a>), extracted the transcript, and analyzed it using the LLM (<a href="06_llm_utility.md">Chapter 6</a>) to get topics, Q&amp;A, and summaries stored in <a href="03_shared_memory.md">Shared Memory</a>, how do we present all this information nicely to the user?</p>
+
 <p>Let's move on to the final step: putting everything together into a user-friendly report with <a href="07_html_generation.md">Chapter 7: HTML Generation</a>!</p>
+
 <hr />
+
 <p>Generated by <a href="https://github.com/The-Pocket/Tutorial-Codebase-Knowledge">AI Codebase Knowledge Builder</a></p>
+
             
         <div class="navigation">
             <a class="nav-link" href="05_youtube_data_utilities.html">&larr; Previous</a>

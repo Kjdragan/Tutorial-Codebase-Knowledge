@@ -5,69 +5,69 @@
             <meta charset="utf-8">
             <title>02 Node  Pipeline Step </title>
             
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        pre {
-            background-color: #f5f5f5;
-            padding: 15px;
-            border-radius: 5px;
-            overflow-x: auto;
-        }
-        code {
-            background-color: #f5f5f5;
-            padding: 2px 5px;
-            border-radius: 3px;
-        }
-        .navigation {
-            display: flex;
-            justify-content: space-between;
-            margin: 20px 0;
-            padding: 10px;
-            background-color: #f5f5f5;
-            border-radius: 5px;
-        }
-        .nav-link {
-            text-decoration: none;
-            color: #0366d6;
-        }
-        .nav-link:hover {
-            text-decoration: underline;
-        }
-        .mermaid {
-            text-align: center;
-            margin: 20px 0;
-        }
-    </style>
-    
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                max-width: 900px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            pre {
+                background-color: #f5f5f5;
+                padding: 15px;
+                border-radius: 5px;
+                overflow-x: auto;
+            }
+            code {
+                background-color: #f5f5f5;
+                padding: 2px 5px;
+                border-radius: 3px;
+            }
+            .navigation {
+                display: flex;
+                justify-content: space-between;
+                margin: 20px 0;
+                padding: 10px;
+                background-color: #f5f5f5;
+                border-radius: 5px;
+            }
+            .nav-link {
+                text-decoration: none;
+                color: #0366d6;
+            }
+            .nav-link:hover {
+                text-decoration: underline;
+            }
+            .mermaid {
+                text-align: center;
+                margin: 20px 0;
+            }
+        </style>
+        
             
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            mermaid.initialize({
-                startOnLoad: true,
-                theme: 'default',
-                securityLevel: 'loose',
-                flowchart: {
-                    useMaxWidth: false,
-                    htmlLabels: true
-                },
-                sequence: {
-                    useMaxWidth: false,
-                    htmlLabels: true,
-                    diagramMarginX: 50,
-                    diagramMarginY: 10,
-                    boxMargin: 10
-                }
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                mermaid.initialize({
+                    startOnLoad: true,
+                    theme: 'default',
+                    securityLevel: 'loose',
+                    flowchart: {
+                        useMaxWidth: false,
+                        htmlLabels: true
+                    },
+                    sequence: {
+                        useMaxWidth: false,
+                        htmlLabels: true,
+                        diagramMarginX: 50,
+                        diagramMarginY: 10,
+                        boxMargin: 10
+                    }
+                });
             });
-        });
-    </script>
-    
+        </script>
+        
         </head>
         <body>
             
@@ -78,20 +78,30 @@
         </div>
         
             <h1>Chapter 2: Node (Pipeline Step)</h1>
+
 <p>In <a href="01_pipeline_orchestration.md">Chapter 1: Pipeline Orchestration</a>, we learned how our YouTube summarizer uses a pipeline, like an assembly line, to perform a series of steps. We saw that the <code>run_pipeline</code> function acts as the project manager, ensuring each step happens in the right order.</p>
+
 <p>But who actually does the work at each step? If the orchestrator is the manager, who are the specialized workers on the assembly line? That's where <strong>Nodes</strong> come in!</p>
+
 <h2>What is a Node? The Specialist Worker</h2>
+
 <p>Imagine our car assembly line again. One worker installs the engine, another fits the wheels, and another paints the body. Each worker has a very specific job they are trained to do.</p>
+
 <p>In our <code>pf1</code> project, a <strong>Node</strong> is like one of these specialized workers. It's a self-contained piece of code responsible for <strong>one specific task</strong> within the overall summarization pipeline.</p>
+
 <p>For example, we have Nodes dedicated to tasks like:
 *   Getting the video's title and ID (<code>InputProcessingNode</code>)
 *   Extracting the spoken words (transcript) (<code>ContentExtractionNode</code>)
 *   Figuring out the main topics discussed (<code>TopicExtractionNode</code>)
 *   Generating Questions &amp; Answers for a topic (<code>TopicProcessorNode</code>)
 *   Creating the final HTML report (<code>HTMLGenerationNode</code>)</p>
+
 <p>Each Node focuses <em>only</em> on its job. The <code>ContentExtractionNode</code> doesn't worry about how to generate HTML; it just focuses on getting the transcript accurately.</p>
+
 <h2>Why Break Tasks into Nodes?</h2>
+
 <p>Why not just have one giant function do everything? Breaking the work into Nodes helps us in several ways:</p>
+
 <ol>
 <li><strong>Clarity:</strong> It's much easier to understand a small piece of code that does one thing well (like getting a transcript) than a huge chunk of code that does everything.</li>
 <li><strong>Organization:</strong> It keeps our project tidy. All the code related to transcript extraction lives within the <code>ContentExtractionNode</code>'s file.</li>
@@ -99,111 +109,127 @@
 <li><strong>Testing:</strong> We can test each Node individually to make sure it works correctly before plugging it into the main pipeline.</li>
 <li><strong>Teamwork:</strong> Different people could work on different Nodes simultaneously.</li>
 </ol>
+
 <h2>The Node's Standard Workflow: Prep, Exec, Post</h2>
+
 <p>Think about our assembly line worker again. Before starting their main task, they need to get ready. Maybe they need to grab the right tools or pick up the specific part they need to work on (like the engine block). After doing their job, they need to put the finished piece back onto the assembly line correctly so the next worker can use it.</p>
+
 <p>Our Nodes follow a similar standard process, defined by a template (called a "base class" in programming, specifically <code>BaseNode</code> in <code>src/nodes/base_node.py</code>). Every Node has three main phases, implemented as methods (functions belonging to the Node):</p>
+
 <ol>
-<li>
-<p><strong><code>prep()</code> (Prepare):</strong></p>
+<li><p><strong><code>prep()</code> (Prepare):</strong></p>
+
 <ul>
 <li><strong>What it does:</strong> Gets the Node ready to work.</li>
 <li><strong>Analogy:</strong> The worker checks the instructions, grabs the necessary tools, and picks up the required input part (e.g., the video ID) from the shared workspace (<a href="03_shared_memory.md">Shared Memory</a>).</li>
 <li><strong>In code:</strong> Reads necessary information from the <code>shared_memory</code> dictionary. Checks if the required inputs are actually there.</li>
-</ul>
-</li>
-<li>
-<p><strong><code>exec()</code> (Execute):</strong></p>
+</ul></li>
+<li><p><strong><code>exec()</code> (Execute):</strong></p>
+
 <ul>
 <li><strong>What it does:</strong> Performs the Node's main task. This is where the real work happens.</li>
 <li><strong>Analogy:</strong> The worker installs the engine, extracts the transcript, or identifies the topics.</li>
 <li><strong>In code:</strong> Calls other utility functions or uses libraries to perform its specific job (like calling the YouTube transcript API or using an AI model).</li>
-</ul>
-</li>
-<li>
-<p><strong><code>post()</code> (Post-Process):</strong></p>
+</ul></li>
+<li><p><strong><code>post()</code> (Post-Process):</strong></p>
+
 <ul>
 <li><strong>What it does:</strong> Cleans up and stores the results.</li>
 <li><strong>Analogy:</strong> The worker puts their tools away and places the finished part (e.g., the extracted transcript) back onto the shared workspace (<a href="03_shared_memory.md">Shared Memory</a>) for the next Node.</li>
 <li><strong>In code:</strong> Takes the results from the <code>exec</code> phase and adds them to the <code>shared_memory</code> dictionary using specific keys (like <code>"transcript"</code>). It might also do some final checks.</li>
-</ul>
-</li>
+</ul></li>
 </ol>
+
 <p>These three methods are always called in the order: <code>prep</code>, then <code>exec</code>, then <code>post</code>.</p>
+
 <h2>How Does a Node Run? The <code>run()</code> Method</h2>
+
 <p>So, how do these <code>prep</code>, <code>exec</code>, and <code>post</code> methods get called? The <a href="01_pipeline_orchestration.md">Pipeline Orchestration</a> (our <code>run_pipeline</code> function) doesn't call them individually. Instead, each Node has a <code>run()</code> method (provided by the <code>BaseNode</code> template).</p>
+
 <p>When the orchestrator wants a Node to do its job, it simply calls that Node's <code>run()</code> method. The <code>run()</code> method then takes care of calling <code>prep()</code>, <code>exec()</code>, and <code>post()</code> in the correct sequence.</p>
-<pre><code class="language-python"># Simplified concept of the BaseNode's run method
-# (See src/nodes/base_node.py for the real code)
 
-class BaseNode:
-    # ... (other parts like __init__) ...
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Simplified concept of the BaseNode&#39;s run method</span>
+<span class="c1"># (See src/nodes/base_node.py for the real code)</span>
 
-    def prep(self):
-        # To be implemented by specific nodes
-        pass
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseNode</span><span class="p">:</span>
+    <span class="c1"># ... (other parts like __init__) ...</span>
 
-    def exec(self):
-        # To be implemented by specific nodes
-        pass
+    <span class="k">def</span><span class="w"> </span><span class="nf">prep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># To be implemented by specific nodes</span>
+        <span class="k">pass</span>
 
-    def post(self):
-        # To be implemented by specific nodes
-        pass
+    <span class="k">def</span><span class="w"> </span><span class="nf">exec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># To be implemented by specific nodes</span>
+        <span class="k">pass</span>
 
-    def run(self):
-        # 1. Prepare
-        self.prep()
+    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># To be implemented by specific nodes</span>
+        <span class="k">pass</span>
 
-        # 2. Execute (only if prep was okay)
-        # (Simplified: Real code checks for errors)
-        self.exec()
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># 1. Prepare</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prep</span><span class="p">()</span>
 
-        # 3. Post-process (only if exec was okay)
-        # (Simplified: Real code checks for errors)
-        self.post()
+        <span class="c1"># 2. Execute (only if prep was okay)</span>
+        <span class="c1"># (Simplified: Real code checks for errors)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
 
-        # Return the updated shared memory
-        return self.shared_memory
+        <span class="c1"># 3. Post-process (only if exec was okay)</span>
+        <span class="c1"># (Simplified: Real code checks for errors)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">()</span>
+
+        <span class="c1"># Return the updated shared memory</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_memory</span>
 </code></pre>
+</div>
+
 <p>This <code>run()</code> method acts like the Node's internal manager, ensuring the standard workflow is followed. The pipeline orchestrator just needs to call <code>run()</code>, making the main pipeline code cleaner.</p>
+
 <h2>Example: The Content Extraction Node</h2>
+
 <p>Let's look at a concrete example: the <code>ContentExtractionNode</code> (found in <code>src/nodes/content_extraction_node.py</code>). Its job is to get the transcript (spoken words) for the YouTube video.</p>
+
 <p>Here's a simplified view of its <code>prep</code>, <code>exec</code>, and <code>post</code> methods:</p>
-<pre><code class="language-python"># Simplified version of ContentExtractionNode
-# (See src/nodes/content_extraction_node.py for full code)
 
-from src.nodes.base_node import BaseNode
-from src.utils.extract_youtube_transcript import extract_youtube_transcript # Utility function
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Simplified version of ContentExtractionNode</span>
+<span class="c1"># (See src/nodes/content_extraction_node.py for full code)</span>
 
-class ContentExtractionNode(BaseNode):
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.nodes.base_node</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseNode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.utils.extract_youtube_transcript</span><span class="w"> </span><span class="kn">import</span> <span class="n">extract_youtube_transcript</span> <span class="c1"># Utility function</span>
 
-    def prep(self):
-        # Get ready: Need the video_id from shared memory
-        print(&quot;ContentExtractionNode: Preparing...&quot;)
-        if &quot;video_id&quot; not in self.shared_memory:
-            print(&quot;Error: video_id is missing!&quot;)
-            # (Real node would set an error flag)
-            return
-        self.video_id = self.shared_memory[&quot;video_id&quot;]
-        print(f&quot;Found video_id: {self.video_id}&quot;)
+<span class="k">class</span><span class="w"> </span><span class="nc">ContentExtractionNode</span><span class="p">(</span><span class="n">BaseNode</span><span class="p">):</span>
 
-    def exec(self):
-        # Do the work: Call the transcript extraction utility
-        print(f&quot;ContentExtractionNode: Executing - Getting transcript for {self.video_id}...&quot;)
-        # This function actually calls the YouTube API
-        transcript_text = extract_youtube_transcript(self.video_id)
-        # Store the result temporarily within the node
-        self.extracted_transcript = transcript_text
-        print(&quot;Got the transcript!&quot;)
+    <span class="k">def</span><span class="w"> </span><span class="nf">prep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Get ready: Need the video_id from shared memory</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ContentExtractionNode: Preparing...&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;video_id&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_memory</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: video_id is missing!&quot;</span><span class="p">)</span>
+            <span class="c1"># (Real node would set an error flag)</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">video_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_memory</span><span class="p">[</span><span class="s2">&quot;video_id&quot;</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found video_id: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">video_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    def post(self):
-        # Store result: Put the transcript into shared memory
-        print(&quot;ContentExtractionNode: Posting results...&quot;)
-        self.shared_memory[&quot;transcript&quot;] = self.extracted_transcript
-        print(f&quot;Added 'transcript' (length: {len(self.extracted_transcript)}) to shared memory.&quot;)
+    <span class="k">def</span><span class="w"> </span><span class="nf">exec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Do the work: Call the transcript extraction utility</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ContentExtractionNode: Executing - Getting transcript for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">video_id</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+        <span class="c1"># This function actually calls the YouTube API</span>
+        <span class="n">transcript_text</span> <span class="o">=</span> <span class="n">extract_youtube_transcript</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_id</span><span class="p">)</span>
+        <span class="c1"># Store the result temporarily within the node</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extracted_transcript</span> <span class="o">=</span> <span class="n">transcript_text</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Got the transcript!&quot;</span><span class="p">)</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Store result: Put the transcript into shared memory</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ContentExtractionNode: Posting results...&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shared_memory</span><span class="p">[</span><span class="s2">&quot;transcript&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extracted_transcript</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Added &#39;transcript&#39; (length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extracted_transcript</span><span class="p">)</span><span class="si">}</span><span class="s2">) to shared memory.&quot;</span><span class="p">)</span>
 </code></pre>
+</div>
+
 <p>Let's break down what happens when the orchestrator calls <code>run()</code> on this Node:</p>
+
 <ol>
 <li><strong><code>run()</code> starts.</strong></li>
 <li><strong><code>prep()</code> runs:</strong> It looks into the <code>shared_memory</code> dictionary given to it and expects to find a key called <code>"video_id"</code>. If it's missing, it signals an error (in the real code). If found, it stores the ID for later use.</li>
@@ -211,59 +237,70 @@ class ContentExtractionNode(BaseNode):
 <li><strong><code>post()</code> runs:</strong> It takes the <code>extracted_transcript</code> from the <code>exec</code> phase and adds it to the <code>shared_memory</code> dictionary under the key <code>"transcript"</code>.</li>
 <li><strong><code>run()</code> finishes:</strong> It returns the <em>updated</em> <code>shared_memory</code> (which now includes the transcript) back to the orchestrator.</li>
 </ol>
+
 <p>The orchestrator then takes this updated <code>shared_memory</code> and passes it to the <em>next</em> Node in the pipeline (e.g., the <code>TopicExtractionNode</code>), which can now read the <code>"transcript"</code> key.</p>
+
 <h2>How Nodes Fit Together (Recap)</h2>
+
 <p>As we saw in <a href="01_pipeline_orchestration.md">Chapter 1</a>, the <code>run_pipeline</code> function manages this flow:</p>
-<div class="mermaid">
-sequenceDiagram
+
+<pre><code>sequenceDiagram
     participant RP as run_pipeline (Orchestrator)
     participant INode as Input Node
     participant CNode as Content Extraction Node
     participant TNode as Topic Extraction Node
     participant SM as Shared Memory
 
-    RP->>SM: Initialize with URL
-    RP->>INode: run(SM)
-    INode->>INode: prep() [reads URL]
-    INode->>INode: exec() [gets video_id, metadata]
-    INode->>INode: post() [writes video_id, metadata to SM]
-    INode-->>RP: Return updated SM
+    RP-&gt;&gt;SM: Initialize with URL
+    RP-&gt;&gt;INode: run(SM)
+    INode-&gt;&gt;INode: prep() [reads URL]
+    INode-&gt;&gt;INode: exec() [gets video_id, metadata]
+    INode-&gt;&gt;INode: post() [writes video_id, metadata to SM]
+    INode--&gt;&gt;RP: Return updated SM
     Note right of RP: SM now contains video_id, metadata
 
-    RP->>CNode: run(SM)
-    CNode->>CNode: prep() [reads video_id from SM]
-    CNode->>CNode: exec() [calls YT API, gets transcript]
-    CNode->>CNode: post() [writes transcript to SM]
-    CNode-->>RP: Return updated SM
+    RP-&gt;&gt;CNode: run(SM)
+    CNode-&gt;&gt;CNode: prep() [reads video_id from SM]
+    CNode-&gt;&gt;CNode: exec() [calls YT API, gets transcript]
+    CNode-&gt;&gt;CNode: post() [writes transcript to SM]
+    CNode--&gt;&gt;RP: Return updated SM
     Note right of RP: SM now contains transcript
 
-    RP->>TNode: run(SM)
-    TNode->>TNode: prep() [reads transcript from SM]
-    TNode->>TNode: exec() [analyzes transcript, finds topics]
-    TNode->>TNode: post() [writes topics to SM]
-    TNode-->>RP: Return updated SM
+    RP-&gt;&gt;TNode: run(SM)
+    TNode-&gt;&gt;TNode: prep() [reads transcript from SM]
+    TNode-&gt;&gt;TNode: exec() [analyzes transcript, finds topics]
+    TNode-&gt;&gt;TNode: post() [writes topics to SM]
+    TNode--&gt;&gt;RP: Return updated SM
     Note right of RP: SM now contains topics
-    RP->>...: Continues with next Node...
+    RP-&gt;&gt;...: Continues with next Node...
+</code></pre>
 
-</div>
 <p>This diagram shows how the orchestrator (<code>run_pipeline</code>) calls the <code>run()</code> method of each Node in turn. Inside <code>run()</code>, the <code>prep</code>, <code>exec</code>, and <code>post</code> methods handle reading from and writing to the Shared Memory (<code>SM</code>), effectively passing information down the assembly line.</p>
+
 <h2>Conclusion</h2>
+
 <p>In this chapter, we zoomed in on the individual workers of our pipeline: the <strong>Nodes</strong>.</p>
+
 <ul>
 <li>A Node is a <strong>specialized component</strong> responsible for <strong>one specific task</strong> (like extracting transcripts or topics).</li>
 <li>Using Nodes makes our code <strong>organized, modular, and easier to manage</strong>.</li>
-<li>All Nodes follow a standard <strong><code>prep</code> -&gt; <code>exec</code> -&gt; <code>post</code> workflow</strong>, managed by their <code>run()</code> method.<ul>
+<li>All Nodes follow a standard <strong><code>prep</code> -> <code>exec</code> -> <code>post</code> workflow</strong>, managed by their <code>run()</code> method.
+<ul>
 <li><code>prep</code>: Get ready, read inputs from Shared Memory.</li>
 <li><code>exec</code>: Do the main work.</li>
 <li><code>post</code>: Store results back into Shared Memory.</li>
-</ul>
-</li>
+</ul></li>
 <li>The pipeline orchestrator calls each Node's <code>run()</code> method in sequence, passing the updated Shared Memory along.</li>
 </ul>
+
 <p>Now we understand the orchestrator (the manager) and the Nodes (the workers). But how exactly does this "shared workspace" or "shared notebook" work where Nodes read inputs and write outputs?</p>
+
 <p>Let's dive into the details of that central data hub in <a href="03_shared_memory.md">Chapter 3: Shared Memory</a>!</p>
+
 <hr />
+
 <p>Generated by <a href="https://github.com/The-Pocket/Tutorial-Codebase-Knowledge">AI Codebase Knowledge Builder</a></p>
+
             
         <div class="navigation">
             <a class="nav-link" href="01_pipeline_orchestration.html">&larr; Previous</a>

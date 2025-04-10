@@ -5,69 +5,69 @@
             <meta charset="utf-8">
             <title>03 Shared Memory</title>
             
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        pre {
-            background-color: #f5f5f5;
-            padding: 15px;
-            border-radius: 5px;
-            overflow-x: auto;
-        }
-        code {
-            background-color: #f5f5f5;
-            padding: 2px 5px;
-            border-radius: 3px;
-        }
-        .navigation {
-            display: flex;
-            justify-content: space-between;
-            margin: 20px 0;
-            padding: 10px;
-            background-color: #f5f5f5;
-            border-radius: 5px;
-        }
-        .nav-link {
-            text-decoration: none;
-            color: #0366d6;
-        }
-        .nav-link:hover {
-            text-decoration: underline;
-        }
-        .mermaid {
-            text-align: center;
-            margin: 20px 0;
-        }
-    </style>
-    
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                max-width: 900px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            pre {
+                background-color: #f5f5f5;
+                padding: 15px;
+                border-radius: 5px;
+                overflow-x: auto;
+            }
+            code {
+                background-color: #f5f5f5;
+                padding: 2px 5px;
+                border-radius: 3px;
+            }
+            .navigation {
+                display: flex;
+                justify-content: space-between;
+                margin: 20px 0;
+                padding: 10px;
+                background-color: #f5f5f5;
+                border-radius: 5px;
+            }
+            .nav-link {
+                text-decoration: none;
+                color: #0366d6;
+            }
+            .nav-link:hover {
+                text-decoration: underline;
+            }
+            .mermaid {
+                text-align: center;
+                margin: 20px 0;
+            }
+        </style>
+        
             
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            mermaid.initialize({
-                startOnLoad: true,
-                theme: 'default',
-                securityLevel: 'loose',
-                flowchart: {
-                    useMaxWidth: false,
-                    htmlLabels: true
-                },
-                sequence: {
-                    useMaxWidth: false,
-                    htmlLabels: true,
-                    diagramMarginX: 50,
-                    diagramMarginY: 10,
-                    boxMargin: 10
-                }
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                mermaid.initialize({
+                    startOnLoad: true,
+                    theme: 'default',
+                    securityLevel: 'loose',
+                    flowchart: {
+                        useMaxWidth: false,
+                        htmlLabels: true
+                    },
+                    sequence: {
+                        useMaxWidth: false,
+                        htmlLabels: true,
+                        diagramMarginX: 50,
+                        diagramMarginY: 10,
+                        boxMargin: 10
+                    }
+                });
             });
-        });
-    </script>
-    
+        </script>
+        
         </head>
         <body>
             
@@ -78,181 +78,218 @@
         </div>
         
             <h1>Chapter 3: Shared Memory</h1>
+
 <p>In <a href="01_pipeline_orchestration.md">Chapter 1: Pipeline Orchestration</a>, we saw our pipeline manager (<code>run_pipeline</code>) coordinating the different steps. In <a href="02_node__pipeline_step_.md">Chapter 2: Node (Pipeline Step)</a>, we met the specialized workers (Nodes) that perform each task, like getting the video transcript or finding topics.</p>
+
 <p>But how does the "transcript extractor" Node hand over the transcript it found to the "topic finder" Node? They need a way to pass information along the assembly line. That's where <strong>Shared Memory</strong> comes in!</p>
+
 <h2>The Problem: Passing Notes Between Workers</h2>
+
 <p>Imagine our assembly line again.
 1.  Worker A gets the video ID.
 2.  Worker B needs that video ID to fetch the transcript.
 3.  Worker C needs the transcript to find the main topics.</p>
+
 <p>How does Worker A tell Worker B the video ID? How does Worker B give the transcript to Worker C? They can't just shout across the factory floor! They need a reliable way to share their results.</p>
+
 <h2>Our Solution: The Shared Whiteboard (A Python Dictionary)</h2>
+
 <p>In <code>pf1</code>, the <strong>Shared Memory</strong> is our solution. Think of it like a <strong>shared whiteboard</strong> or a <strong>central notebook</strong> that every worker (Node) in the pipeline can access.</p>
+
 <ul>
 <li>When a Node finishes its job, it writes its results onto the whiteboard (e.g., "Video ID: xyz123", "Transcript: Hello world...").</li>
 <li>When the next Node starts its job, it looks at the whiteboard to find the information it needs (e.g., it reads the "Transcript" section).</li>
 </ul>
+
 <p>Technically, this "whiteboard" is just a standard <strong>Python dictionary</strong>. If you're new to Python dictionaries, they simply store information as <strong>key-value pairs</strong>.</p>
-<pre><code class="language-python"># A simple Python dictionary example
-my_info = {
-  &quot;name&quot;: &quot;Alex&quot;,
-  &quot;task&quot;: &quot;Write chapter&quot;,
-  &quot;tools&quot;: [&quot;laptop&quot;, &quot;keyboard&quot;]
-}
 
-# Accessing information using the key
-print(my_info[&quot;name&quot;])  # Output: Alex
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># A simple Python dictionary example</span>
+<span class="n">my_info</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Alex&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;task&quot;</span><span class="p">:</span> <span class="s2">&quot;Write chapter&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;tools&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;laptop&quot;</span><span class="p">,</span> <span class="s2">&quot;keyboard&quot;</span><span class="p">]</span>
+<span class="p">}</span>
 
-# Adding new information
-my_info[&quot;status&quot;] = &quot;In progress&quot;
-print(my_info)
-# Output: {'name': 'Alex', 'task': 'Write chapter', 'tools': ['laptop', 'keyboard'], 'status': 'In progress'}
+<span class="c1"># Accessing information using the key</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">my_info</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>  <span class="c1"># Output: Alex</span>
+
+<span class="c1"># Adding new information</span>
+<span class="n">my_info</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;In progress&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">my_info</span><span class="p">)</span>
+<span class="c1"># Output: {&#39;name&#39;: &#39;Alex&#39;, &#39;task&#39;: &#39;Write chapter&#39;, &#39;tools&#39;: [&#39;laptop&#39;, &#39;keyboard&#39;], &#39;status&#39;: &#39;In progress&#39;}</span>
 </code></pre>
+</div>
+
 <p>Our <code>shared_memory</code> works exactly like this! It's a dictionary where keys are strings describing the data (like <code>"video_url"</code>, <code>"video_id"</code>, <code>"transcript"</code>, <code>"topics"</code>), and the values are the actual data (the URL string, the ID string, the long transcript text, a list of topic strings, etc.).</p>
+
 <h2>How Shared Memory Flows Through the Pipeline</h2>
+
 <ol>
-<li>
-<p><strong>Initialization:</strong> The pipeline orchestrator (<code>run_pipeline</code> in <code>src/main.py</code>) creates the <code>shared_memory</code> dictionary when the pipeline starts. Initially, it usually just contains the input needed for the very first step, like the YouTube video URL.</p>
-<p>```python</p>
-<h1>From src/main.py (simplified)</h1>
-<p>def run_pipeline(youtube_url, ...):
-    # Create the shared memory dictionary
-    shared_memory = {"video_url": youtube_url}
-    logger.info("Shared memory initialized.")
-    # ... rest of the pipeline ...
-<code>``
-At this point,</code>shared_memory<code>looks like:</code>{"video_url": "https://youtube.com/watch?v=some_id"}`</p>
-</li>
-<li>
-<p><strong>Passing to Nodes:</strong> The orchestrator passes this <code>shared_memory</code> dictionary to the first Node when it calls the Node's <code>run()</code> method.</p>
-<p>```python</p>
-<h1>From src/main.py (simplified)</h1>
-<h1>... inside run_pipeline ...</h1>
-<h1>1. Input Processing Node</h1>
-<p>logger.info("Calling InputProcessingNode...")
-input_node = InputProcessingNode(shared_memory) # Give the Node access
-shared_memory = input_node.run() # Node runs and returns the UPDATED dictionary
-```</p>
-</li>
-<li>
-<p><strong>Nodes Read and Write:</strong> Inside the Node's <code>run()</code> method, the <code>prep</code>, <code>exec</code>, and <code>post</code> methods interact with the dictionary:</p>
+<li><p><strong>Initialization:</strong> The pipeline orchestrator (<code>run_pipeline</code> in <code>src/main.py</code>) creates the <code>shared_memory</code> dictionary when the pipeline starts. Initially, it usually just contains the input needed for the very first step, like the YouTube video URL.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># From src/main.py (simplified)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_pipeline</span><span class="p">(</span><span class="n">youtube_url</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
+    <span class="c1"># Create the shared memory dictionary</span>
+    <span class="n">shared_memory</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;video_url&quot;</span><span class="p">:</span> <span class="n">youtube_url</span><span class="p">}</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Shared memory initialized.&quot;</span><span class="p">)</span>
+    <span class="c1"># ... rest of the pipeline ...</span>
+</code></pre>
+</div>
+
+<p>At this point, <code>shared_memory</code> looks like: <code>{"video_url": "https://youtube.com/watch?v=some_id"}</code></p></li>
+<li><p><strong>Passing to Nodes:</strong> The orchestrator passes this <code>shared_memory</code> dictionary to the first Node when it calls the Node's <code>run()</code> method.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># From src/main.py (simplified)</span>
+<span class="c1"># ... inside run_pipeline ...</span>
+
+<span class="c1"># 1. Input Processing Node</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calling InputProcessingNode...&quot;</span><span class="p">)</span>
+<span class="n">input_node</span> <span class="o">=</span> <span class="n">InputProcessingNode</span><span class="p">(</span><span class="n">shared_memory</span><span class="p">)</span> <span class="c1"># Give the Node access</span>
+<span class="n">shared_memory</span> <span class="o">=</span> <span class="n">input_node</span><span class="o">.</span><span class="n">run</span><span class="p">()</span> <span class="c1"># Node runs and returns the UPDATED dictionary</span>
+</code></pre>
+</div></li>
+<li><p><strong>Nodes Read and Write:</strong> Inside the Node's <code>run()</code> method, the <code>prep</code>, <code>exec</code>, and <code>post</code> methods interact with the dictionary:</p>
+
 <ul>
 <li><strong><code>prep()</code> reads:</strong> It looks up the keys it needs (e.g., the <code>InputProcessingNode</code> reads <code>"video_url"</code>).</li>
-<li><strong><code>post()</code> writes:</strong> After <code>exec()</code> does the work, <code>post()</code> adds the Node's results back into the <em>same</em> dictionary using new keys (e.g., the <code>InputProcessingNode</code> adds <code>"video_id"</code> and <code>"metadata"</code>).</li>
+<li><strong><code>post()</code> writes:</strong> After <code>exec()</code> does the work, <code>post()</code> adds the Node's results back into the <em>same</em> dictionary using new keys (e.g., the <code>InputProcessingNode</code> adds <code>"video_id"</code> and <code>"metadata"</code>).
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Inside InputProcessingNode (simplified)</span></li>
 </ul>
-<p>```python</p>
-<h1>Inside InputProcessingNode (simplified)</h1>
-<p>def prep(self):
-    # Read the URL provided by the orchestrator
-    self.url = self.shared_memory["video_url"]
-    logger.debug(f"Input node read URL: {self.url}")</p>
-<p>def exec(self):
-    # Do work: Get video ID and metadata from the URL
-    # (Simplified - actual logic calls YouTube utilities)
-    self.video_id_result = "xyz123"
-    self.metadata_result = {"title": "Cool Video", "author": "Creator"}
-    logger.debug("Input node got video ID and metadata.")</p>
-<p>def post(self):
-    # Write the results back to the dictionary
-    self.shared_memory["video_id"] = self.video_id_result
-    self.shared_memory["metadata"] = self.metadata_result
-    logger.debug("Input node wrote video_id and metadata to shared memory.")
-```</p>
-</li>
-<li>
-<p><strong>Passing Updated Memory:</strong> When the Node's <code>run()</code> method finishes, it returns the modified <code>shared_memory</code> dictionary back to the orchestrator. The orchestrator then passes this <em>updated</em> dictionary to the <em>next</em> Node in the sequence.</p>
-<p>```python</p>
-<h1>From src/main.py (simplified)</h1>
-<h1>... after InputProcessingNode runs ...</h1>
-<h1>shared_memory now contains:</h1>
-<h1>{</h1>
-<h1>"video_url": "https://youtube.com/watch?v=some_id",</h1>
-<h1>"video_id": "xyz123",</h1>
-<h1>"metadata": {"title": "Cool Video", "author": "Creator"}</h1>
-<h1>}</h1>
-<h1>2. Content Extraction Node</h1>
-<p>logger.info("Calling ContentExtractionNode...")
-content_node = ContentExtractionNode(shared_memory) # Pass the UPDATED memory
-shared_memory = content_node.run() # Get the next update
-```</p>
-</li>
-<li>
-<p><strong>Chain Reaction:</strong> This process repeats for every Node in the pipeline. Each Node reads the data left by previous Nodes and adds its own results.</p>
+
+<p><span class="k">def</span><span class="w"> </span><span class="nf">prep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># Read the URL provided by the orchestrator</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared<em>memory</span><span class="p">[</span><span class="s2">&quot;video</em>url&quot;</span><span class="p">]</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input node read URL: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></p>
+
+<p><span class="k">def</span><span class="w"> </span><span class="nf">exec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># Do work: Get video ID and metadata from the URL</span>
+    <span class="c1"># (Simplified - actual logic calls YouTube utilities)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">video<em>id</em>result</span> <span class="o">=</span> <span class="s2">&quot;xyz123&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">metadata_result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Cool Video&quot;</span><span class="p">,</span> <span class="s2">&quot;author&quot;</span><span class="p">:</span> <span class="s2">&quot;Creator&quot;</span><span class="p">}</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Input node got video ID and metadata.&quot;</span><span class="p">)</span></p>
+
+<p><span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># Write the results back to the dictionary</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">shared<em>memory</span><span class="p">[</span><span class="s2">&quot;video</em>id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">video<em>id</em>result</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">shared<em>memory</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</em>result</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Input node wrote video_id and metadata to shared memory.&quot;</span><span class="p">)</span>
+</code></pre>
+</div></p></li>
+<li><p><strong>Passing Updated Memory:</strong> When the Node's <code>run()</code> method finishes, it returns the modified <code>shared_memory</code> dictionary back to the orchestrator. The orchestrator then passes this <em>updated</em> dictionary to the <em>next</em> Node in the sequence.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># From src/main.py (simplified)</span>
+<span class="c1"># ... after InputProcessingNode runs ...</span>
+<span class="c1"># shared_memory now contains:</span>
+<span class="c1"># {</span>
+<span class="c1">#   &quot;video_url&quot;: &quot;https://youtube.com/watch?v=some_id&quot;,</span>
+<span class="c1">#   &quot;video_id&quot;: &quot;xyz123&quot;,</span>
+<span class="c1">#   &quot;metadata&quot;: {&quot;title&quot;: &quot;Cool Video&quot;, &quot;author&quot;: &quot;Creator&quot;}</span>
+<span class="c1"># }</span>
+
+<span class="c1"># 2. Content Extraction Node</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calling ContentExtractionNode...&quot;</span><span class="p">)</span>
+<span class="n">content_node</span> <span class="o">=</span> <span class="n">ContentExtractionNode</span><span class="p">(</span><span class="n">shared_memory</span><span class="p">)</span> <span class="c1"># Pass the UPDATED memory</span>
+<span class="n">shared_memory</span> <span class="o">=</span> <span class="n">content_node</span><span class="o">.</span><span class="n">run</span><span class="p">()</span> <span class="c1"># Get the next update</span>
+</code></pre>
+</div></li>
+<li><p><strong>Chain Reaction:</strong> This process repeats for every Node in the pipeline. Each Node reads the data left by previous Nodes and adds its own results.</p>
+
 <ul>
 <li><code>ContentExtractionNode</code> reads <code>"video_id"</code>, does its work, and adds <code>"transcript"</code>.</li>
 <li><code>TopicExtractionNode</code> reads <code>"transcript"</code>, does its work, and adds <code>"topics"</code>.</li>
 <li>...and so on.</li>
-</ul>
-</li>
+</ul></li>
 </ol>
+
 <p>The <code>shared_memory</code> dictionary grows as it passes through the pipeline, accumulating all the results.</p>
+
 <h2>Under the Hood: Passing the Dictionary Around</h2>
+
 <p>Is this some magic "shared" space in the computer's memory? Not really! It's much simpler in our case.</p>
+
 <p>Python dictionaries are "mutable" objects. This means when you pass a dictionary to a function (or a Node's method), you're passing a reference to the <em>exact same</em> dictionary object in memory. If the function modifies the dictionary (like adding a new key), the original dictionary that was passed in also changes.</p>
+
 <p>So, the orchestrator creates <em>one</em> dictionary object. It passes a reference to this object to Node 1. Node 1 modifies it directly. The orchestrator then passes the reference to the <em>same, now modified</em> object to Node 2, and so on.</p>
+
 <p>Here's a diagram showing this flow:</p>
-<div class="mermaid">
-sequenceDiagram
+
+<pre><code>sequenceDiagram
     participant Orch as run_pipeline (Orchestrator)
     participant SMDict as Shared Memory (Python Dictionary)
     participant NodeA as InputProcessingNode
     participant NodeB as ContentExtractionNode
 
-    Orch->>SMDict: Create { "video_url": "..." }
-    Orch->>NodeA: run(reference to SMDict)
-    NodeA->>NodeA: prep() [reads "video_url" from SMDict]
-    NodeA->>NodeA: exec() [gets video_id, metadata]
-    NodeA->>SMDict: post() [adds "video_id", "metadata"]
-    NodeA-->>Orch: Return reference to SMDict
+    Orch-&gt;&gt;SMDict: Create { "video_url": "..." }
+    Orch-&gt;&gt;NodeA: run(reference to SMDict)
+    NodeA-&gt;&gt;NodeA: prep() [reads "video_url" from SMDict]
+    NodeA-&gt;&gt;NodeA: exec() [gets video_id, metadata]
+    NodeA-&gt;&gt;SMDict: post() [adds "video_id", "metadata"]
+    NodeA--&gt;&gt;Orch: Return reference to SMDict
     Note right of Orch: SMDict is now modified
 
-    Orch->>NodeB: run(reference to SMDict)
-    NodeB->>NodeB: prep() [reads "video_id" from SMDict]
-    NodeB->>NodeB: exec() [gets transcript]
-    NodeB->>SMDict: post() [adds "transcript"]
-    NodeB-->>Orch: Return reference to SMDict
+    Orch-&gt;&gt;NodeB: run(reference to SMDict)
+    NodeB-&gt;&gt;NodeB: prep() [reads "video_id" from SMDict]
+    NodeB-&gt;&gt;NodeB: exec() [gets transcript]
+    NodeB-&gt;&gt;SMDict: post() [adds "transcript"]
+    NodeB--&gt;&gt;Orch: Return reference to SMDict
     Note right of Orch: SMDict is now further modified
-
-</div>
-<p>It's like passing the <em>same physical notebook</em> from person to person. Each person adds their notes to it before passing it on.</p>
-<h2>Example: Reading and Writing</h2>
-<p>Let's see how the <code>ContentExtractionNode</code> might read the <code>"video_id"</code> written by <code>InputProcessingNode</code> and then write the <code>"transcript"</code>.</p>
-<pre><code class="language-python"># Inside ContentExtractionNode (simplified)
-
-def prep(self):
-    # Read the video_id written by the previous node
-    if &quot;video_id&quot; in self.shared_memory:
-        self.video_id_to_process = self.shared_memory[&quot;video_id&quot;]
-        logger.debug(f&quot;Content node read video_id: {self.video_id_to_process}&quot;)
-    else:
-        # Handle missing data (important!)
-        logger.error(&quot;Error: video_id not found in shared memory!&quot;)
-        self.shared_memory[&quot;error&quot;] = &quot;Missing video_id for transcript extraction&quot;
-
-def exec(self):
-    # Only run if prep was successful (no error)
-    if &quot;error&quot; not in self.shared_memory:
-        # Use self.video_id_to_process to get the transcript
-        # (Simplified - actual logic calls YouTube utilities)
-        self.transcript_result = &quot;This is the transcript text...&quot;
-        logger.debug(&quot;Content node got the transcript.&quot;)
-
-def post(self):
-    # Only run if prep and exec were successful
-    if &quot;error&quot; not in self.shared_memory:
-        # Write the transcript result to shared memory
-        self.shared_memory[&quot;transcript&quot;] = self.transcript_result
-        logger.debug(&quot;Content node wrote transcript to shared memory.&quot;)
 </code></pre>
+
+<p>It's like passing the <em>same physical notebook</em> from person to person. Each person adds their notes to it before passing it on.</p>
+
+<h2>Example: Reading and Writing</h2>
+
+<p>Let's see how the <code>ContentExtractionNode</code> might read the <code>"video_id"</code> written by <code>InputProcessingNode</code> and then write the <code>"transcript"</code>.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Inside ContentExtractionNode (simplified)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">prep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># Read the video_id written by the previous node</span>
+    <span class="k">if</span> <span class="s2">&quot;video_id&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_memory</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">video_id_to_process</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_memory</span><span class="p">[</span><span class="s2">&quot;video_id&quot;</span><span class="p">]</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Content node read video_id: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">video_id_to_process</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Handle missing data (important!)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Error: video_id not found in shared memory!&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shared_memory</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Missing video_id for transcript extraction&quot;</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">exec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># Only run if prep was successful (no error)</span>
+    <span class="k">if</span> <span class="s2">&quot;error&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_memory</span><span class="p">:</span>
+        <span class="c1"># Use self.video_id_to_process to get the transcript</span>
+        <span class="c1"># (Simplified - actual logic calls YouTube utilities)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transcript_result</span> <span class="o">=</span> <span class="s2">&quot;This is the transcript text...&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Content node got the transcript.&quot;</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># Only run if prep and exec were successful</span>
+    <span class="k">if</span> <span class="s2">&quot;error&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_memory</span><span class="p">:</span>
+        <span class="c1"># Write the transcript result to shared memory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shared_memory</span><span class="p">[</span><span class="s2">&quot;transcript&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transcript_result</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Content node wrote transcript to shared memory.&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
 <p>This Node first checks if the key <code>"video_id"</code> exists in the <code>shared_memory</code> it received (this is crucial error handling!). If it exists, it uses that ID in its <code>exec</code> step. Finally, in <code>post</code>, it adds its own result under the key <code>"transcript"</code>. The next Node can now read <code>"transcript"</code>.</p>
+
 <h2>Why Use a Dictionary?</h2>
+
 <ul>
 <li><strong>Simplicity:</strong> It's a fundamental Python data structure, easy to understand and use.</li>
 <li><strong>Flexibility:</strong> Dictionaries can hold various data types (strings, numbers, lists, even other dictionaries), which is perfect for the different kinds of results our Nodes produce.</li>
 <li><strong>Clarity:</strong> Using meaningful keys (like <code>"transcript"</code>, <code>"topics"</code>) makes it clear what data is being passed around.</li>
 </ul>
+
 <h2>Conclusion</h2>
+
 <p>We've learned about <strong>Shared Memory</strong>, the crucial mechanism that allows our pipeline Nodes to communicate and share data.</p>
+
 <ul>
 <li>It's implemented as a simple <strong>Python dictionary</strong>.</li>
 <li>The pipeline orchestrator (<a href="01_pipeline_orchestration.md">Chapter 1</a>) creates it and passes it sequentially to each Node (<a href="02_node__pipeline_step_.md">Chapter 2</a>).</li>
@@ -260,11 +297,17 @@ def post(self):
 <li>Nodes <strong>write</strong> their results back into the dictionary using new keys (usually in <code>post</code>).</li>
 <li>This allows data like the video ID, transcript, and topics to flow smoothly from one step to the next.</li>
 </ul>
+
 <p>Understanding Shared Memory is key to seeing how the different parts of our <code>pf1</code> project connect and build upon each other's work.</p>
+
 <p>Now that we understand the basic building blocks (Orchestration, Nodes, Shared Memory), we can look at more specialized components. Next, we'll explore a Node that acts as a mini-orchestrator itself, managing the detailed processing of topics.</p>
+
 <p>Let's dive into the <a href="04_topic_processing_orchestrator.md">Topic Processing Orchestrator</a>!</p>
+
 <hr />
+
 <p>Generated by <a href="https://github.com/The-Pocket/Tutorial-Codebase-Knowledge">AI Codebase Knowledge Builder</a></p>
+
             
         <div class="navigation">
             <a class="nav-link" href="02_node__pipeline_step_.html">&larr; Previous</a>

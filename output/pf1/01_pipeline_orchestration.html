@@ -5,69 +5,69 @@
             <meta charset="utf-8">
             <title>01 Pipeline Orchestration</title>
             
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        pre {
-            background-color: #f5f5f5;
-            padding: 15px;
-            border-radius: 5px;
-            overflow-x: auto;
-        }
-        code {
-            background-color: #f5f5f5;
-            padding: 2px 5px;
-            border-radius: 3px;
-        }
-        .navigation {
-            display: flex;
-            justify-content: space-between;
-            margin: 20px 0;
-            padding: 10px;
-            background-color: #f5f5f5;
-            border-radius: 5px;
-        }
-        .nav-link {
-            text-decoration: none;
-            color: #0366d6;
-        }
-        .nav-link:hover {
-            text-decoration: underline;
-        }
-        .mermaid {
-            text-align: center;
-            margin: 20px 0;
-        }
-    </style>
-    
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                max-width: 900px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            pre {
+                background-color: #f5f5f5;
+                padding: 15px;
+                border-radius: 5px;
+                overflow-x: auto;
+            }
+            code {
+                background-color: #f5f5f5;
+                padding: 2px 5px;
+                border-radius: 3px;
+            }
+            .navigation {
+                display: flex;
+                justify-content: space-between;
+                margin: 20px 0;
+                padding: 10px;
+                background-color: #f5f5f5;
+                border-radius: 5px;
+            }
+            .nav-link {
+                text-decoration: none;
+                color: #0366d6;
+            }
+            .nav-link:hover {
+                text-decoration: underline;
+            }
+            .mermaid {
+                text-align: center;
+                margin: 20px 0;
+            }
+        </style>
+        
             
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            mermaid.initialize({
-                startOnLoad: true,
-                theme: 'default',
-                securityLevel: 'loose',
-                flowchart: {
-                    useMaxWidth: false,
-                    htmlLabels: true
-                },
-                sequence: {
-                    useMaxWidth: false,
-                    htmlLabels: true,
-                    diagramMarginX: 50,
-                    diagramMarginY: 10,
-                    boxMargin: 10
-                }
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                mermaid.initialize({
+                    startOnLoad: true,
+                    theme: 'default',
+                    securityLevel: 'loose',
+                    flowchart: {
+                        useMaxWidth: false,
+                        htmlLabels: true
+                    },
+                    sequence: {
+                        useMaxWidth: false,
+                        htmlLabels: true,
+                        diagramMarginX: 50,
+                        diagramMarginY: 10,
+                        boxMargin: 10
+                    }
+                });
             });
-        });
-    </script>
-    
+        </script>
+        
         </head>
         <body>
             
@@ -78,62 +78,85 @@
         </div>
         
             <h1>Chapter 1: Pipeline Orchestration</h1>
+
 <p>Welcome to the <code>pf1</code> YouTube Summarizer project! We're thrilled to have you here. Our goal is to build a tool that takes a YouTube video URL and automatically creates a nice summary report.</p>
+
 <p>Imagine you want to build a car. You don't just magically get a car! You need an assembly line: a frame is built, then the engine is added, then the wheels, the doors, the paint, and so on. Each step builds upon the previous one, and they have to happen in the right order.</p>
+
 <p>Our YouTube summarizer works similarly. We can't just get a summary instantly from a URL. We need a series of steps:
 1.  Get information <em>about</em> the video (like its title).
 2.  Extract the spoken words (the transcript).
 3.  Figure out the main topics discussed.
 4.  Analyze each topic (maybe generate questions and answers).
 5.  Put everything together into a readable report (like an HTML page).</p>
+
 <p>This sequence of steps is what we call a <strong>Pipeline</strong>.</p>
+
 <p>But who manages this assembly line? Who makes sure step 1 finishes before step 2 starts, and that the output from step 1 is correctly passed to step 2? That's where <strong>Pipeline Orchestration</strong> comes in.</p>
+
 <p>Think of Pipeline Orchestration like the <strong>Project Manager</strong> or the <strong>Factory Foreman</strong> for our summarization task. It doesn't do the specific jobs itself (like extracting the transcript or generating HTML), but it manages the overall <em>flow</em>, ensuring each specialist task runs at the right time and in the right order.</p>
+
 <h2>Why Do We Need Orchestration?</h2>
+
 <p>You might wonder, why not just write one giant piece of code that does everything?</p>
+
 <ol>
 <li><strong>Order Matters:</strong> You can't analyze topics before you have the transcript, and you can't create the final report before you've analyzed the topics. Orchestration enforces this correct sequence.</li>
 <li><strong>Managing Complexity:</strong> Breaking the big problem (summarizing a video) into smaller, manageable steps makes the code easier to understand, develop, and fix. Orchestration connects these smaller pieces.</li>
 <li><strong>Passing Information:</strong> The output of one step is often the input for the next. For example, the transcript extracted in one step is needed to find topics in the next step. The orchestrator helps manage how this information (or "data") is passed along.</li>
 </ol>
+
 <h2>Our Project Manager: The <code>run_pipeline</code> Function</h2>
+
 <p>In our project (<code>pf1</code>), the main orchestrator is a function called <code>run_pipeline</code> located in the <code>src/main.py</code> file. This function defines the sequence of steps needed to go from a YouTube URL to a final summary report.</p>
+
 <p>It calls upon different specialists, which we call <strong>Nodes</strong>. Each Node is responsible for one specific task in the pipeline. We'll learn all about Nodes in <a href="02_node__pipeline_step_.md">Chapter 2: Node (Pipeline Step)</a>.</p>
+
 <p>For now, just know that <code>run_pipeline</code> calls these Nodes one after another.</p>
+
 <p>Here's a simplified view of what <code>run_pipeline</code> does:</p>
-<pre><code class="language-python"># This is a simplified example!
-# Find the real code in src/main.py
 
-def run_pipeline(youtube_url):
-    # 1. Get basic video info (like title)
-    step1_output = run_input_processing_node(youtube_url)
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># This is a simplified example!</span>
+<span class="c1"># Find the real code in src/main.py</span>
 
-    # 2. Get the video's transcript
-    step2_output = run_content_extraction_node(step1_output)
+<span class="k">def</span><span class="w"> </span><span class="nf">run_pipeline</span><span class="p">(</span><span class="n">youtube_url</span><span class="p">):</span>
+    <span class="c1"># 1. Get basic video info (like title)</span>
+    <span class="n">step1_output</span> <span class="o">=</span> <span class="n">run_input_processing_node</span><span class="p">(</span><span class="n">youtube_url</span><span class="p">)</span>
 
-    # 3. Find the main topics in the transcript
-    step3_output = run_topic_extraction_node(step2_output)
+    <span class="c1"># 2. Get the video&#39;s transcript</span>
+    <span class="n">step2_output</span> <span class="o">=</span> <span class="n">run_content_extraction_node</span><span class="p">(</span><span class="n">step1_output</span><span class="p">)</span>
 
-    # 4. Analyze each topic (e.g., generate Q&amp;A)
-    step4_output = run_topic_orchestration_node(step3_output)
+    <span class="c1"># 3. Find the main topics in the transcript</span>
+    <span class="n">step3_output</span> <span class="o">=</span> <span class="n">run_topic_extraction_node</span><span class="p">(</span><span class="n">step2_output</span><span class="p">)</span>
 
-    # 5. Create the final HTML report
-    final_report = run_html_generation_node(step4_output)
+    <span class="c1"># 4. Analyze each topic (e.g., generate Q&amp;A)</span>
+    <span class="n">step4_output</span> <span class="o">=</span> <span class="n">run_topic_orchestration_node</span><span class="p">(</span><span class="n">step3_output</span><span class="p">)</span>
 
-    print(&quot;Pipeline complete! Report created.&quot;)
-    return final_report
+    <span class="c1"># 5. Create the final HTML report</span>
+    <span class="n">final_report</span> <span class="o">=</span> <span class="n">run_html_generation_node</span><span class="p">(</span><span class="n">step4_output</span><span class="p">)</span>
 
-# Imagine calling it like this:
-# run_pipeline(&quot;https://www.youtube.com/watch?v=some_video_id&quot;)
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pipeline complete! Report created.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">final_report</span>
+
+<span class="c1"># Imagine calling it like this:</span>
+<span class="c1"># run_pipeline(&quot;https://www.youtube.com/watch?v=some_video_id&quot;)</span>
 </code></pre>
+</div>
+
 <p>In this simplified example, you can clearly see the sequence. The <code>run_pipeline</code> function calls each step (<code>run_..._node</code>) in order, passing the result from one step to the next.</p>
+
 <h2>Passing Notes: How Data Flows</h2>
+
 <p>How does the output from <code>run_input_processing_node</code> get to <code>run_content_extraction_node</code>? The orchestrator uses a central place to store the results from each step. Think of it like a shared notebook or clipboard that each specialist Node can read from and write to.</p>
+
 <p>In our project, we call this the <a href="03_shared_memory.md">Shared Memory</a>. The <code>run_pipeline</code> function initializes this shared memory (initially just containing the input URL) and passes it to the first Node. That Node does its work, adds its results to the shared memory, and returns it. The orchestrator then passes the updated shared memory to the next Node, and so on. We'll dive deeper into this in <a href="03_shared_memory.md">Chapter 3</a>.</p>
+
 <h2>Visualizing the Flow</h2>
+
 <p>Let's visualize this flow using a simple diagram. <code>run_pipeline</code> is the manager, directing the Nodes and passing the <code>shared_memory</code> (our shared notebook) between them.</p>
-<div class="mermaid">
-sequenceDiagram
+
+<pre><code>sequenceDiagram
     participant User
     participant RP as run_pipeline (Orchestrator)
     participant INode as InputProcessingNode
@@ -142,117 +165,148 @@ sequenceDiagram
     participant HNode as HTMLGenerationNode
     participant SM as Shared Memory
 
-    User->>RP: Start with YouTube URL
-    RP->>SM: Initialize with URL
-    RP->>INode: run(SM)
-    INode->>SM: Add video metadata
-    INode-->>RP: Return updated SM
-    RP->>CNode: run(SM)
-    CNode->>SM: Add transcript
-    CNode-->>RP: Return updated SM
-    RP->>TNode: run(SM)
-    TNode->>SM: Add topics
-    TNode-->>RP: Return updated SM
+    User-&gt;&gt;RP: Start with YouTube URL
+    RP-&gt;&gt;SM: Initialize with URL
+    RP-&gt;&gt;INode: run(SM)
+    INode-&gt;&gt;SM: Add video metadata
+    INode--&gt;&gt;RP: Return updated SM
+    RP-&gt;&gt;CNode: run(SM)
+    CNode-&gt;&gt;SM: Add transcript
+    CNode--&gt;&gt;RP: Return updated SM
+    RP-&gt;&gt;TNode: run(SM)
+    TNode-&gt;&gt;SM: Add topics
+    TNode--&gt;&gt;RP: Return updated SM
     Note right of RP: ... other nodes run ...
-    RP->>HNode: run(SM)
-    HNode->>SM: Generate HTML path
-    HNode-->>RP: Return final SM
-    RP-->>User: Report results (including HTML path)
+    RP-&gt;&gt;HNode: run(SM)
+    HNode-&gt;&gt;SM: Generate HTML path
+    HNode--&gt;&gt;RP: Return final SM
+    RP--&gt;&gt;User: Report results (including HTML path)
+</code></pre>
 
-</div>
 <p>This diagram shows how <code>run_pipeline</code> calls each Node in sequence (<code>INode</code>, <code>CNode</code>, <code>TNode</code>, <code>HNode</code>), passing the <code>Shared Memory</code> (<code>SM</code>) along. Each Node reads from <code>SM</code> and adds its own results back into it.</p>
+
 <h2>A Look at the Real Code (<code>src/main.py</code>)</h2>
+
 <p>Let's look at the actual <code>run_pipeline</code> function in <code>src/main.py</code>. Don't worry if not everything makes sense yet; we'll cover the details in later chapters. Focus on seeing the sequence of Nodes being called.</p>
+
 <p>First, the function starts by setting things up, including the <code>shared_memory</code>:</p>
-<pre><code class="language-python"># From src/main.py
 
-import os
-# ... other imports ...
-from src.nodes.input_processing_node import InputProcessingNode
-# ... imports for other nodes ...
-from src.utils.logger import logger
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># From src/main.py</span>
 
-def run_pipeline(youtube_url, output_dir=&quot;output&quot;, ...):
-    logger.info(&quot;Starting YouTube Video Summarizer...&quot;)
-    logger.info(f&quot;Processing URL: {youtube_url}&quot;)
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="c1"># ... other imports ...</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.nodes.input_processing_node</span><span class="w"> </span><span class="kn">import</span> <span class="n">InputProcessingNode</span>
+<span class="c1"># ... imports for other nodes ...</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.utils.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
-    # Initialize shared memory - our 'shared notebook'
-    shared_memory = {&quot;video_url&quot;: youtube_url}
+<span class="k">def</span><span class="w"> </span><span class="nf">run_pipeline</span><span class="p">(</span><span class="n">youtube_url</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;output&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting YouTube Video Summarizer...&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing URL: </span><span class="si">{</span><span class="n">youtube_url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    # Create output directory if it doesn't exist
-    os.makedirs(output_dir, exist_ok=True)
+    <span class="c1"># Initialize shared memory - our &#39;shared notebook&#39;</span>
+    <span class="n">shared_memory</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;video_url&quot;</span><span class="p">:</span> <span class="n">youtube_url</span><span class="p">}</span>
 
-    try:
-        # ... (rest of the pipeline steps below) ...
+    <span class="c1"># Create output directory if it doesn&#39;t exist</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># ... (rest of the pipeline steps below) ...</span>
 </code></pre>
+</div>
+
 <p>This part just logs some information and creates the <code>shared_memory</code> dictionary, initially holding only the <code>video_url</code>. It also ensures the directory for saving the final report exists.</p>
+
 <p>Now, the orchestrator starts calling the Nodes one by one:</p>
-<pre><code class="language-python">        # 1. Input Processing Node
-        logger.info(&quot;[1/5] Starting Input Processing...&quot;)
-        # Create the specialist Node
-        input_node = InputProcessingNode(shared_memory)
-        # Ask the Node to run and update shared_memory
-        shared_memory = input_node.run()
-        # Check if the Node reported an error
-        if &quot;error&quot; in shared_memory:
-            # Handle error and stop
-            logger.error(f&quot;Input Processing failed...&quot;)
-            return shared_memory
-        logger.info(&quot;Successfully processed video info.&quot;)
+
+<div class="codehilite">
+<pre><span></span><code>        <span class="c1"># 1. Input Processing Node</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;[1/5] Starting Input Processing...&quot;</span><span class="p">)</span>
+        <span class="c1"># Create the specialist Node</span>
+        <span class="n">input_node</span> <span class="o">=</span> <span class="n">InputProcessingNode</span><span class="p">(</span><span class="n">shared_memory</span><span class="p">)</span>
+        <span class="c1"># Ask the Node to run and update shared_memory</span>
+        <span class="n">shared_memory</span> <span class="o">=</span> <span class="n">input_node</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="c1"># Check if the Node reported an error</span>
+        <span class="k">if</span> <span class="s2">&quot;error&quot;</span> <span class="ow">in</span> <span class="n">shared_memory</span><span class="p">:</span>
+            <span class="c1"># Handle error and stop</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input Processing failed...&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">shared_memory</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Successfully processed video info.&quot;</span><span class="p">)</span>
 </code></pre>
+</div>
+
 <p>This block shows the pattern:
 1.  Log that the step is starting.
 2.  Create an instance of the specific Node needed (e.g., <code>InputProcessingNode</code>), passing it the current <code>shared_memory</code>.
 3.  Call the Node's <code>run()</code> method. The Node performs its task and returns the <em>updated</em> <code>shared_memory</code>.
 4.  Update the <code>shared_memory</code> variable in <code>run_pipeline</code> with the returned value.
 5.  Check for errors. If an error occurred, the pipeline stops.</p>
+
 <p>This pattern repeats for all the steps:</p>
-<pre><code class="language-python">        # 2. Content Extraction Node
-        logger.info(&quot;[2/5] Starting Content Extraction...&quot;)
-        content_node = ContentExtractionNode(shared_memory)
-        shared_memory = content_node.run()
-        if &quot;error&quot; in shared_memory: # Error check
-            logger.error(f&quot;Content Extraction failed...&quot;)
-            return shared_memory
-        logger.info(&quot;Successfully extracted transcript.&quot;)
 
-        # 3. Topic Extraction Node
-        logger.info(&quot;[3/5] Starting Topic Extraction...&quot;)
-        topic_node = TopicExtractionNode(shared_memory, ...) # Some nodes need extra config
-        shared_memory = topic_node.run()
-        if &quot;error&quot; in shared_memory: # Error check
-            logger.error(f&quot;Topic Extraction failed...&quot;)
-            return shared_memory
-        logger.info(&quot;Successfully extracted topics.&quot;)
+<div class="codehilite">
+<pre><span></span><code>        <span class="c1"># 2. Content Extraction Node</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;[2/5] Starting Content Extraction...&quot;</span><span class="p">)</span>
+        <span class="n">content_node</span> <span class="o">=</span> <span class="n">ContentExtractionNode</span><span class="p">(</span><span class="n">shared_memory</span><span class="p">)</span>
+        <span class="n">shared_memory</span> <span class="o">=</span> <span class="n">content_node</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s2">&quot;error&quot;</span> <span class="ow">in</span> <span class="n">shared_memory</span><span class="p">:</span> <span class="c1"># Error check</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Content Extraction failed...&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">shared_memory</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Successfully extracted transcript.&quot;</span><span class="p">)</span>
 
-        # ... (Steps 4 and 5 follow the same pattern) ...
+        <span class="c1"># 3. Topic Extraction Node</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;[3/5] Starting Topic Extraction...&quot;</span><span class="p">)</span>
+        <span class="n">topic_node</span> <span class="o">=</span> <span class="n">TopicExtractionNode</span><span class="p">(</span><span class="n">shared_memory</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span> <span class="c1"># Some nodes need extra config</span>
+        <span class="n">shared_memory</span> <span class="o">=</span> <span class="n">topic_node</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s2">&quot;error&quot;</span> <span class="ow">in</span> <span class="n">shared_memory</span><span class="p">:</span> <span class="c1"># Error check</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Topic Extraction failed...&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">shared_memory</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Successfully extracted topics.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># ... (Steps 4 and 5 follow the same pattern) ...</span>
 </code></pre>
+</div>
+
 <p>You can see how <code>run_pipeline</code> acts as the orchestrator, calling each Node (<code>InputProcessingNode</code>, <code>ContentExtractionNode</code>, <code>TopicExtractionNode</code>, etc.) in the correct order and passing the <code>shared_memory</code> between them.</p>
+
 <p>Finally, after all steps are complete (if no errors occurred), it logs a success message:</p>
-<pre><code class="language-python">        # ... After step 5 (HTML Generation) ...
 
-        logger.info(&quot;Summary Generation Complete!&quot;)
-        # ... Print final summary info ...
-        return shared_memory # Return the final state
+<div class="codehilite">
+<pre><span></span><code>        <span class="c1"># ... After step 5 (HTML Generation) ...</span>
 
-    except Exception as e:
-        # Catch any unexpected problems
-        logger.exception(f&quot;Unexpected error in pipeline: {str(e)}&quot;)
-        shared_memory[&quot;error&quot;] = f&quot;Pipeline error: {str(e)}&quot;
-        return shared_memory
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Summary Generation Complete!&quot;</span><span class="p">)</span>
+        <span class="c1"># ... Print final summary info ...</span>
+        <span class="k">return</span> <span class="n">shared_memory</span> <span class="c1"># Return the final state</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># Catch any unexpected problems</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unexpected error in pipeline: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">shared_memory</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Pipeline error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">shared_memory</span>
 </code></pre>
+</div>
+
 <p>The function returns the final <code>shared_memory</code>, which now contains all the results from the pipeline, including the path to the generated HTML report.</p>
+
 <h2>Conclusion</h2>
+
 <p>In this chapter, we learned about <strong>Pipeline Orchestration</strong>. It's the process of managing a sequence of steps (a pipeline) to achieve a complex goal, like summarizing a YouTube video.</p>
+
 <p>We saw that orchestration is crucial for:
 *   Ensuring steps run in the correct order.
 *   Breaking down a large task into smaller, manageable parts (Nodes).
 *   Passing information between steps using a shared space (Shared Memory).</p>
+
 <p>In our <code>pf1</code> project, the <code>run_pipeline</code> function in <code>src/main.py</code> acts as our orchestrator, calling different <strong>Nodes</strong> in sequence and managing the data flow via <strong>Shared Memory</strong>.</p>
+
 <p>Now that we understand the overall flow managed by the orchestrator, let's zoom in on the individual specialists that perform the actual work: the Nodes.</p>
+
 <p>Ready to meet the specialists? Let's move on to <a href="02_node__pipeline_step_.md">Chapter 2: Node (Pipeline Step)</a>!</p>
+
 <hr />
+
 <p>Generated by <a href="https://github.com/The-Pocket/Tutorial-Codebase-Knowledge">AI Codebase Knowledge Builder</a></p>
+
             
         <div class="navigation">
             
